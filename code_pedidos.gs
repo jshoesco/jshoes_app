@@ -12,7 +12,7 @@ function onOpen() {
  * Muestra el formulario HTML de Pedidos como una ventana de diálogo modal.
  */
 function mostrarFormularioPedidos() {
-  var html = HtmlService.createHtmlOutputFromFile('Formulario')
+  var html = HtmlService.createHtmlOutputFromFile('form_pedidos')
       .setWidth(600) 
       .setHeight(650) 
       .setTitle('Registro de Pedidos/Rechazos');
