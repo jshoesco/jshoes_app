@@ -1,0 +1,1498 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+/* ======================================================================== */
+/* --- PALETA DE COLORES Y VARIABLES GLOBALES (Tu Diseño) --- */
+/* ======================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+:root{
+    --primary: #D61A1A;         
+    --primary-hover: #B51212;   
+    --secondary: #007BFF;       
+    --secondary-hover: #0056B3; 
+    --bg: #ffffff;              
+    --text: #1f2937;            
+    --muted: #6b7280;           
+    --border: #d1d5db;          
+    --input-bg: #f9fafb;        
+    --success-color: #10B981;   
+    --warning-color: #F59E0B;   
+    --danger: var(--primary);   
+    --gap: 20px;
+}
+/* ======================================================================== */
+/* --- ESTILOS BASE Y LAYOUT (Mobile First) --- */
+/* ======================================================================== */
+body{
+    font-family: "Poppins", sans-serif;
+    padding: 0; 
+    margin: 0;
+    background: #f0f0f0; 
+    color: var(--text);
+    font-weight: 400;
+    height: 100vh; 
+    box-sizing: border-box;
+}
+.form-wrap{
+    width: 100%; 
+    height: 100%;
+    max-height: 100%;
+    background: var(--bg);
+    padding: 20px 20px 30px 20px; 
+    border-radius: 0; 
+    overflow-y: auto;
+    box-shadow: none; 
+    border: none;
+    margin: 0; 
+    box-sizing: border-box;
+}
+h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--primary);
+    margin: 0 0 15px 0;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #f3f4f6;
+}
+.grid-2-col {
+    display: grid;
+    grid-template-columns: 1fr; 
+    gap: 15px; 
+    margin-bottom: var(--gap);
+}
+@media (min-width: 450px) {
+  .grid-2-col {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: var(--gap); 
+}
+label{
+    display: block;
+    font-size: 14px;
+    font-weight: 500; 
+    color: var(--text);
+    margin: 0 0 4px 0;
+}
+label small {
+    font-weight: 400;
+    color: var(--muted);
+    margin-left: 5px;
+}
+/* ======================================================================== */
+/* --- ESTILOS DE INPUTS, SELECTS, TEXTAREA (Tu Diseño) --- */
+/* ======================================================================== */
+select,
+textarea,
+input[type="date"],
+input[type="text"],
+input[type="number"],
+input[type="search"]
+{
+    height: 44px; 
+    padding: 10px 12px;
+    width: 100%;
+    font-size: 14px;
+    font-family: "Poppins", sans-serif;
+    background: var(--input-bg);
+    box-sizing: border-box;
+    border-radius: 6px; 
+    border: 1px solid var(--border);
+    transition: border-color .15s ease, box-shadow .15s ease;
+    -webkit-appearance: none;
+    appearance: none;
+}
+input[type="search"] {
+    background: var(--bg); 
+    -webkit-appearance: searchfield;
+    appearance: searchfield;
+}
+input[type="search"]::placeholder {
+    color: var(--muted);
+}
+textarea {
+  height: 90px;
+  resize: vertical;
+}
+input:focus, select:focus, textarea:focus, input[type="search"]:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(214, 26, 26, 0.2); 
+    background: var(--bg);
+}
+select {
+    background-color: var(--input-bg);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%234b5563%22%20d%3D%22M4.5%207.5l-3-3L1.5%206l4.5%204.5L10.5%206l-1.5-1.5z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px; 
+}
+input[readonly] {
+    background: #e5e7eb;
+    color: var(--muted);
+}
+/* ======================================================================== */
+/* --- ESTILOS PARA GRUPOS CONDICIONALES --- */
+/* ======================================================================== */
+.conditional-group {
+    display: none; 
+    padding: 15px;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: var(--gap);
+}
+.form-group.conditional-group {
+    padding: 0;
+    background: none;
+    border: none;
+    border-radius: 0;
+    margin-bottom: var(--gap);
+}
+.radio-group {
+  display: flex;
+  gap: 15px;
+  margin-top: 5px;
+}
+.radio-group label {
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+  font-size: 14px;
+  cursor: pointer;
+}
+.radio-group input {
+  margin-right: 8px;
+  width: auto;
+  height: auto;
+  -webkit-appearance: radio;
+  appearance: radio;
+}
+.product-list-container {
+  max-height: 250px; 
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px;
+  background: var(--bg);
+  margin-top: 10px;
+}
+/* ⚡ Nuevo estilo para tabla de edición */
+.edit-table-container {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg);
+    margin-top: 10px;
+    font-size: 13px;
+}
+.edit-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.edit-table th, .edit-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+}
+.edit-table th {
+    background: var(--input-bg);
+    font-weight: 600;
+    color: var(--text);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.edit-table tr.is-paid td {
+    text-decoration: line-through;
+    color: #9ca3af !important;
+}
+.edit-table .monto-input {
+    width: 80px;
+    height: 30px;
+    padding: 5px;
+    text-align: right;
+    font-weight: 600;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+.product-card {
+  display: grid;
+  grid-template-areas:
+    "check header header"
+    "check body monto";
+  grid-template-columns: auto 1fr auto;
+  border-bottom: 1px solid var(--border);
+  padding: 10px;
+}
+.product-card:last-child {
+  border-bottom: none;
+}
+.product-card.is-checked {
+  background: var(--input-bg); 
+}
+/* ⚡ Estilos para estado de pago */
+.product-card.is-paid .header-area,
+.product-card.is-paid .info-area {
+    text-decoration: line-through;
+    color: #9ca3af !important; 
+}
+.product-card.is-paid .monto-area input {
+    background-color: #d1d5db;
+    font-weight: 500;
+    color: #4b5563;
+}
+.product-card .check-area {
+  grid-area: check;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-right: 10px;
+}
+.product-card .check-area input {
+  width: 20px;
+  height: 20px;
+  -webkit-appearance: checkbox;
+  appearance: checkbox;
+}
+.product-card .info-area {
+  grid-area: body;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.product-card .header-area {
+  grid-area: header;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 5px;
+}
+.product-card .monto-area {
+  grid-area: monto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+}
+.product-card .monto-area label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--primary);
+  margin: 0 0 2px 0;
+}
+.product-card .monto-area input {
+  width: 100px;
+  height: 38px;
+  text-align: right;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 5px;
+  background: white;
+}
+/* ======================================================================== */
+/* --- UTILIDADES DE BOTONES Y FECHA (Tu Diseño) --- */
+/* ======================================================================== */
+button{
+    padding: 10px 15px;
+    border-radius: 6px;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .15s ease, opacity .15s;
+    white-space: nowrap; 
+}
+#guardarBtn, #editarBtn, #actualizarPagosBtn{
+    width: 100%;
+    background: var(--primary);
+    color: #fff;
+    margin-top: 10px; 
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+}
+#guardarBtn:hover, #editarBtn:hover, #actualizarPagosBtn:hover{ background: var(--primary-hover); }
+#guardarBtn[disabled], #editarBtn[disabled], #actualizarPagosBtn[disabled]{ opacity: .65; cursor: not-allowed; }
+.date-input-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.date-input-group input {
+    flex-grow: 1;
+}
+.btn-hoy { 
+    background: #e5e7eb; 
+    border: 1px solid #d1d5db;
+    color: var(--text);
+    padding: 0 10px;
+    height: 44px;
+    flex-shrink: 0;
+}
+.btn-hoy:hover { background: #d1d5db; }
+.btn-hoy svg { stroke: var(--text); width: 20px; height: 20px; }
+.spinner{ 
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    vertical-align: middle;
+}
+@keyframes spin{ 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+/* ======================================================================== */
+/* --- ESTADO: ERROR (Tu Diseño) --- */
+/* ======================================================================== */
+input.error-input, select.error-input, textarea.error-input, .error-input {
+    border-color: var(--danger) !important;
+    box-shadow: 0 0 0 2px rgba(214, 26, 26, 0.2);
+}
+/* ⚡ Estilo para comprobante duplicado */
+#comprobante-duplicado, #comprobante-edicion-duplicado {
+    font-size: 12px;
+    color: var(--danger);
+    font-weight: 500;
+    margin-top: 5px;
+}
+/* ======================================================================== */
+/* --- ESTILOS DE AVISO MODAL (Tu Diseño) --- */
+/* ======================================================================== */
+#customAlert {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.alert-content {
+    background: white;
+    padding: 30px 40px;
+    border-radius: 10px; 
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.15); 
+    max-width: 350px; 
+    width: 90%;
+    text-align: center;
+    animation: fadeInScale 0.2s ease-out;
+}
+#alertIcon {
+    font-size: 38px;
+    display: block;
+    margin-bottom: 12px;
+}
+#alertMessage {
+    margin: 10px 0 20px 0;
+    font-size: 15px;
+    line-height: 1.5; 
+    color: var(--text);
+}
+.alert-content button {
+    width: 100%;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 10px 0;
+    transition: background 0.15s ease;
+}
+@keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+.alert-success #alertIcon { color: var(--success-color); }
+.alert-error #alertIcon { color: var(--danger); } 
+.alert-warning #alertIcon { color: var(--warning-color); }
+.alert-success button { background-color: var(--success-color); color: white; }
+.alert-error button { background-color: var(--danger); color: white; }
+.alert-warning button { background-color: var(--warning-color); color: white; }
+</style>
+</head>
+<body>
+
+<div id="customAlert" style="display:none;">
+    <div class="alert-content">
+        <span id="alertIcon"></span>
+        <p id="alertMessage"></p>
+        <button onclick="ocultarAviso()">Aceptar</button>
+    </div>
+</div>
+
+<div class="form-wrap">
+    
+    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+        <button id="tabRegistro" onclick="alternarVista('registro')" style="flex-grow: 1;" class="active">📝 Registrar</button>
+        <button id="tabEdicion" onclick="alternarVista('edicion')" style="flex-grow: 1;">✏️ Editar Pagos</button>
+    </div>
+
+    <div id="vistaRegistro">
+        <h2>Registrar Movimiento</h2>
+
+        <div class="grid-2-col">
+            <div class="form-group">
+                <label for="fecha">Fecha</label>
+                <div class="date-input-group">
+                    <input type="date" id="fecha">
+                    <button type="button" id="fechaHoy" class="btn-hoy" title="Fecha de hoy" aria-label="Fecha de hoy">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="tipo">Tipo de Movimiento *</label>
+                <select id="tipo" onchange="onTipoChange()">
+                    <option value="">Cargando...</option>
+                </select>
+            </div>
+        </div>
+        
+
+        <h2>Detalles del Movimiento</h2>
+
+        <div class="form-group">
+            <label for="categoria">Categoría *</label>
+            <select id="categoria" disabled onchange="onCategoriaChange()">
+                <option value="">Primero selecciona un Tipo...</option>
+            </select>
+        </div>
+        
+        <div class="conditional-group" id="pedido-group">
+            
+            <div class="form-group" id="id-pedido-group" style="margin-bottom: 15px;">
+                <label for="id_pedido">ID Pedido Relacionado *</label>
+                <select id="id_pedido" onchange="onPedidoChange()">
+                    <option value="">Seleccionar Pedido...</option>
+                </select>
+            </div>
+            
+            <div class="form-group conditional-group" id="tipo-pago-group" style="border: none; padding: 0; margin-bottom: 15px;">
+                <label>Modalidad de Pago *</label>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="tipo_pago" value="Total" onchange="onTipoPagoChange()"> Pago Total
+                    </label>
+                    <label>
+                        <input type="radio" name="tipo_pago" value="Parcial" onchange="onTipoPagoChange()"> Pago Parcial/Individual
+                    </label>
+                </div>
+            </div>
+            
+            <div class="form-group conditional-group" id="productos-pedido-group" style="border: none; padding: 0; margin-bottom: 0;">
+                <label>Productos a Pagar *</label>
+                <div id="productos-list" class="product-list-container">
+                    </div>
+            </div>
+        </div>
+        
+        <div class="form-group conditional-group" id="venta-group">
+            
+            <div class="form-group" style="margin-bottom: 10px; padding: 0; border: none;">
+                <label for="venta-search" style="font-weight: 400; color: var(--muted);">Filtrar por ID Pedido, ID Producto o Cliente:</label>
+                <input type="search" id="venta-search" oninput="onVentaSearch()" placeholder="Escribe para filtrar...">
+            </div>
+            
+            <label>Productos Vendidos * <small>(Selecciona los productos y edita el monto de venta)</small></label>
+            <div id="venta-productos-list" class="product-list-container">
+                </div>
+        </div>
+
+        <div class="grid-2-col">
+            <div class="form-group" style="margin-bottom: var(--gap);">
+                <label for="monto">Monto *</label>
+                <input id="monto" type="text" inputmode="numeric" required placeholder="0">
+            </div>
+            <div class="form-group" style="margin-bottom: var(--gap);">
+                <label for="metodo_pago">Método de Pago *</label>
+                <select id="metodo_pago" onchange="onMetodoPagoChange()">
+                    <option value="">Cargando...</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="form-group conditional-group" id="comprobante-group" style="padding:0; border:none; background:none;">
+            <label for="comprobante">Nro. Transferencia / Comprobante</label>
+            <input id="comprobante" type="text" placeholder="Ej: 123456789" oninput="checkComprobanteDuplicado(this)">
+            <span id="comprobante-duplicado" style="display:none;"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion" placeholder="Ej: Venta de 1 unidad PROD-XYZ"></textarea>
+        </div>
+        
+        <button id="guardarBtn" onclick="guardar()">
+            <span id="btnText">Registrar Movimiento</span>
+            <span id="loadingSpinner" style="display:none; margin-left:6px;"><span class="spinner"></span></span>
+        </button>
+    </div> <div id="vistaEdicion" style="display:none;">
+        <h2>✏️ Edición de Pagos (Pago Pedido)</h2>
+
+        <div class="form-group">
+            <label for="id_movimiento_edicion">Seleccionar ID Movimiento *</label>
+            <select id="id_movimiento_edicion" onchange="loadDetalleMovimiento()">
+                <option value="">Cargando IDs...</option>
+            </select>
+        </div>
+        
+        <div id="edicion-detalles" style="display:none;">
+            <h3>Detalles del Movimiento</h3>
+
+            <div class="grid-2-col">
+                <div class="form-group">
+                    <label for="metodo_edicion">Método de Pago</label>
+                    <select id="metodo_edicion" onchange="onMetodoPagoChangeEdicion(this)">
+                        <option value="">Cargando...</option>
+                    </select>
+                </div>
+                <div class="form-group" id="comprobante-edicion-group">
+                    <label for="comprobante_edicion">Nro. Comprobante</label>
+                    <input id="comprobante_edicion" type="text" placeholder="N/A" oninput="checkComprobanteDuplicado(this)">
+                    <span id="comprobante-edicion-duplicado" style="display:none;"></span>
+                </div>
+            </div>
+
+            <p style="font-weight: 600;">Líneas de Pago (Total Actual: $<span id="total-edicion">0</span>)</p>
+
+            <div id="detalle-tabla-container" class="edit-table-container">
+                </div>
+            
+            <button id="actualizarPagosBtn" onclick="actualizarPagos()">
+                <span id="btnEdicionText">Actualizar Pagos</span>
+                <span id="loadingEdicionSpinner" style="display:none; margin-left:6px;"><span class="spinner"></span></span>
+            </button>
+        </div>
+        <p id="edicion-error" style="color:var(--danger); margin-top:15px; font-weight:500;"></p>
+    </div> </div>
+
+<script>
+    // ========================================================================================
+    // I. VARIABLES Y UTILIDADES GLOBALES
+    // ========================================================================================
+    const f = id => document.getElementById(id);
+    const A = id => document.getElementById(id);
+    
+    let g_Categorias = {};
+    let g_PedidosMap = {}; 
+    let g_ProductosMap = {}; 
+    let g_Metodos = []; 
+    let g_MovimientosIds = []; 
+    let g_DetalleEdicion = []; 
+    let g_ComprobanteDuplicado = false; 
+
+    function gsRunAsync(funcName, ...args){
+        return new Promise((resolve, reject) => {
+            google.script.run
+                .withSuccessHandler(resolve)
+                .withFailureHandler(reject)
+                [funcName](...args); 
+        });
+    }
+
+    function errorHandler(error) {
+        mostrarAviso("❌ Error en la operación: " + error.message, "error");
+        f("btnText").style.display = "inline";
+        f("loadingSpinner").style.display = "none";
+        f("guardarBtn").disabled = false;
+        
+        if (f("actualizarPagosBtn")) {
+             f("btnEdicionText").style.display = "inline";
+             f("loadingEdicionSpinner").style.display = "none";
+             f("actualizarPagosBtn").disabled = false;
+        }
+        
+        console.error(error);
+    }
+    
+    function limpiarErrores() {
+        document.querySelectorAll('.error-input').forEach(el => {
+            el.classList.remove('error-input');
+        });
+        f('comprobante-duplicado').style.display = 'none';
+        f('comprobante-edicion-duplicado').style.display = 'none';
+        g_ComprobanteDuplicado = false;
+    }
+
+    function getNumericValue(id) {
+        const el = (typeof id === 'string') ? f(id) : id;
+        if (el) {
+            return Number(el.value.replace(/[.,]/g, "").replace(/\s/g, "")) || 0;
+        }
+        return 0; 
+    }
+    
+    function formatCurrency(num) {
+        return Number(num).toLocaleString("es-CO");
+    }
+
+    /**
+     * Ordena alfanuméricamente los IDs.
+     */
+    function sortAlphanumeric(a, b) {
+        const numA = parseInt(a.replace(/[^0-9]/g, ''), 10) || 0;
+        const numB = parseInt(b.replace(/[^0-9]/g, ''), 10) || 0;
+        return numA - numB;
+    }
+
+    // ========================================================================================
+    // II. FUNCIONES DE INICIALIZACIÓN Y VISTA
+    // ========================================================================================
+    
+    window.onload = () => {
+        loadInitialData(); 
+        f("fechaHoy").click(); 
+        f("tipo").focus();
+        
+        f("monto").addEventListener("input", ()=>{
+            if (f("monto").readOnly) return; 
+            let v = f("monto").value.replace(/\D/g,""); 
+            f("monto").value = v ? formatCurrency(v) : "";
+        });
+
+        // Sincronizar clases activas al inicio
+        f('tabRegistro').classList.add('active');
+        f('tabEdicion').classList.remove('active');
+    };
+
+    f("fechaHoy").onclick = () => {
+        const hoy = new Date();
+        const yyyy = hoy.getFullYear();
+        const mm = String(hoy.getMonth() + 1).padStart(2, "0");
+        const dd = String(hoy.getDate()).padStart(2, "0");
+        f("fecha").value = `${yyyy}-${mm}-${dd}`;
+    };
+
+    /**
+     * Carga todos los datos y maneja el Punto 1 (Recarga Automática).
+     */
+    function loadInitialData(){
+        gsRunAsync("getInitialData")
+            .then(result => {
+                g_Categorias = result.categories || {};
+                g_PedidosMap = result.pedidosMap || {}; 
+                g_ProductosMap = result.productosMap || {}; 
+                g_Metodos = result.metodos || []; 
+                g_MovimientosIds = result.movimientosIds || []; 
+                
+                // 1. POBBLAR REGISTRO
+                const tipoSelect = f("tipo");
+                tipoSelect.innerHTML = "<option value=''>Seleccionar...</option>"; 
+                Object.keys(g_Categorias).sort().forEach(tipo => {
+                    tipoSelect.appendChild(new Option(tipo, tipo));
+                });
+                
+                const metodoSelect = f("metodo_pago");
+                metodoSelect.innerHTML = "<option value=''>Seleccionar...</option>";
+                g_Metodos.forEach(metodo => {
+                  metodoSelect.appendChild(new Option(metodo, metodo));
+                });
+
+                populatePedidosSelect();
+                populateVentaProductosTable();
+                
+                // 2. POBBLAR EDICIÓN
+                populateMovimientoIds();
+                
+                // Si el formulario estaba en Edición y se recargó, intentar cargar el detalle
+                if (f('vistaEdicion').style.display === 'block' && f('id_movimiento_edicion').value) {
+                     loadDetalleMovimiento();
+                }
+
+            })
+            .catch(errorHandler);
+    }
+    
+    function populatePedidosSelect() {
+      const pedidoSelect = f("id_pedido");
+      pedidoSelect.innerHTML = "<option value=''>Seleccionar Pedido...</option>";
+      
+      const sortedPedidoKeys = Object.keys(g_PedidosMap).sort(sortAlphanumeric); 
+      
+      sortedPedidoKeys.forEach(pedidoId => {
+        pedidoSelect.appendChild(new Option(pedidoId, pedidoId));
+      });
+    }
+
+    function alternarVista(vista) {
+        f('vistaRegistro').style.display = vista === 'registro' ? 'block' : 'none';
+        f('vistaEdicion').style.display = vista === 'edicion' ? 'block' : 'none';
+        f('tabRegistro').classList.toggle('active', vista === 'registro');
+        f('tabEdicion').classList.toggle('active', vista === 'edicion');
+
+        if (vista === 'edicion') {
+            f('edicion-detalles').style.display = 'none';
+            f('id_movimiento_edicion').value = '';
+        } else {
+             f('id_movimiento_edicion').value = ''; 
+        }
+        limpiarErrores();
+    }
+    
+    function populateMovimientoIds() {
+        const movSelect = f('id_movimiento_edicion');
+        movSelect.innerHTML = '<option value="">Seleccionar ID Movimiento...</option>';
+        if (g_MovimientosIds && g_MovimientosIds.length > 0) {
+            const sortedMovKeys = [...g_MovimientosIds].sort(sortAlphanumeric);
+            sortedMovKeys.forEach(id => {
+                movSelect.appendChild(new Option(id, id));
+            });
+        }
+    }
+
+
+    // ========================================================================================
+    // III. LÓGICA DINÁMICA DEL FORMULARIO DE REGISTRO
+    // ========================================================================================
+
+    function onTipoChange() {
+        const tipo = f("tipo").value;
+        const catSelect = f("categoria");
+        
+        catSelect.innerHTML = "";
+        
+        if (tipo && g_Categorias[tipo]) {
+            catSelect.disabled = false;
+            catSelect.innerHTML = "<option value=''>Seleccionar Categoría...</option>";
+            g_Categorias[tipo].forEach(categoria => {
+                catSelect.appendChild(new Option(categoria, categoria));
+            });
+        } else {
+            catSelect.disabled = true;
+            catSelect.innerHTML = "<option value=''>Primero selecciona un Tipo...</option>";
+        }
+        
+        onCategoriaChange(); 
+    }
+    
+    function onCategoriaChange() {
+        const categoria = f("categoria").value.toLowerCase().trim();
+        const pedidoGroup = f("pedido-group");
+        const ventaGroup = f("venta-group");
+        
+        pedidoGroup.style.display = 'none'; 
+        ventaGroup.style.display = 'none';
+        f("tipo-pago-group").style.display = 'none';
+        f("productos-pedido-group").style.display = 'none';
+        
+        f("monto").readOnly = false; 
+        f("id_pedido").value = "";
+        onPedidoChange(true); 
+        
+        if (categoria === 'pago pedido') {
+          pedidoGroup.style.display = 'block';
+          f("tipo-pago-group").style.display = 'block'; 
+        } else if (categoria === 'pago envio') {
+          pedidoGroup.style.display = 'block';
+          f("tipo-pago-group").style.display = 'none'; 
+          f("productos-pedido-group").style.display = 'none'; 
+        } else if (categoria === 'venta') {
+          ventaGroup.style.display = 'block'; 
+          f("monto").readOnly = true; 
+          f("venta-search").value = ""; 
+          onVentaSearch(); 
+        }
+    }
+    
+    function onPedidoChange(isReset = false) {
+        const pedidoId = f("id_pedido").value;
+        
+        f("tipo-pago-group").style.display = 'none';
+        f("productos-pedido-group").style.display = 'none';
+        
+        document.querySelectorAll('input[name="tipo_pago"]').forEach(radio => radio.checked = false);
+        f("productos-list").innerHTML = "";
+
+        const categoria = f("categoria").value.toLowerCase().trim();
+        if (pedidoId && !isReset && categoria === 'pago pedido') {
+           f("tipo-pago-group").style.display = 'block';
+           f("monto").value = ""; 
+        }
+    }
+
+    function onTipoPagoChange() {
+        const tipoPago = document.querySelector('input[name="tipo_pago"]:checked')?.value;
+        const productosGroup = f("productos-pedido-group");
+        
+        if (tipoPago === 'Parcial') {
+          productosGroup.style.display = 'block';
+          f("monto").readOnly = true; 
+          populatePagoProductosTable();
+        } else if (tipoPago === 'Total') {
+          productosGroup.style.display = 'none';
+          f("monto").readOnly = true; 
+          f("productos-list").innerHTML = ""; 
+          updateTotalMontoPago(); 
+        } else {
+          productosGroup.style.display = 'none';
+          f("monto").readOnly = false; 
+          f("productos-list").innerHTML = ""; 
+        }
+    }
+    
+    function onMetodoPagoChange() {
+        const metodo = f("metodo_pago").value.toLowerCase().trim();
+        const compGroup = f("comprobante-group");
+        
+        if (metodo && metodo !== "efectivo") {
+          compGroup.style.display = 'block';
+        } else {
+          compGroup.style.display = 'none';
+          f("comprobante").value = ""; 
+        }
+        f('comprobante-duplicado').style.display = 'none';
+        f('comprobante').classList.remove('error-input');
+    }
+    
+    /**
+     * Muestra el COSTO pendiente de pago, tacha los pagados y deshabilita inputs.
+     */
+    function populatePagoProductosTable() {
+      const pedidoId = f("id_pedido").value;
+      const listContainer = f("productos-list");
+      listContainer.innerHTML = ""; 
+      const productos = g_PedidosMap[pedidoId];
+      
+      if (productos && productos.length > 0) {
+        productos.forEach((prod, index) => {
+          
+          const costoTotal = prod.costo || 0;
+          const pagadoPrevio = prod.pagado || 0; 
+          const pendiente = prod.pendiente || 0; 
+          
+          const isPaid = pendiente === 0; 
+          const montoAPagar = pendiente; 
+          
+          const card = document.createElement('div');
+          card.className = 'product-card ' + (isPaid ? 'is-paid' : ''); 
+          card.dataset.idProd = prod.idProd; 
+          card.dataset.montoUnitario = costoTotal; 
+          
+          const montoInputId = `pago-monto-${index}`;
+          
+          card.innerHTML = `
+            <div class="check-area">
+              <input type="checkbox" class="product-checkbox" value="${prod.idProd}" 
+                     onchange="updateTotalMontoPago(this)" ${isPaid ? 'disabled' : ''}> 
+            </div>
+            <div class="header-area">${prod.idProd}</div>
+            <div class="info-area">
+              ${prod.cliente || 'N/A'}<br>
+              Costo Total: ${formatCurrency(costoTotal)} | Pagado: ${formatCurrency(pagadoPrevio)}
+            </div>
+            <div class="monto-area">
+              <label>${isPaid ? 'Pagado' : 'Falta Pagar'}</label> 
+              <input type="text" inputmode="numeric" class="product-monto" id="${montoInputId}" 
+                     value="${formatCurrency(montoAPagar)}" 
+                     oninput="onMontoInput(this, 'pago')" 
+                     ${isPaid ? 'readonly' : ''}> 
+            </div>
+          `;
+          listContainer.appendChild(card);
+        });
+      } else {
+        listContainer.innerHTML = "<label><small>No se encontraron productos para este pedido.</small></label>";
+      }
+      updateTotalMontoPago(); 
+    }
+    
+    function populateVentaProductosTable() {
+        const listContainer = f("venta-productos-list");
+        listContainer.innerHTML = ""; 
+        
+        const productos = Object.values(g_ProductosMap); 
+        let count = 0;
+        
+        if (productos && productos.length > 0) {
+          productos.forEach((prod, index) => {
+            count++;
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.dataset.idProd = prod.idProd; 
+            card.dataset.precio = prod.precio; 
+            card.dataset.idPedido = prod.idPed; 
+            
+            const searchTerms = `${prod.idProd} ${prod.idPed} ${prod.cliente || ''}`.toLowerCase();
+            card.dataset.searchTerms = searchTerms;
+            
+            const montoInputId = `venta-monto-${index}`;
+            
+            card.innerHTML = `
+              <div class="check-area">
+                <input type="checkbox" class="product-checkbox" value="${prod.idProd}" onchange="updateTotalMontoVenta(this)">
+              </div>
+              <div class="header-area">${prod.idProd}</div>
+              <div class="info-area">
+                (Pedido: ${prod.idPed})<br>
+                ${prod.cliente || 'N/A'}<br>
+                SKU: ${prod.sku}<br>
+                ${prod.modeloMarca}
+              </div>
+              <div class="monto-area">
+                <label>Monto Venta</label>
+                <input type="text" inputmode="numeric" class="product-monto" id="${montoInputId}" value="${formatCurrency(prod.precio)}" oninput="onMontoInput(this, 'venta')">
+              </div>
+            `;
+            listContainer.appendChild(card);
+          });
+        } 
+        
+        if (count === 0) {
+          listContainer.innerHTML = "<label style='padding:10px;'><small>No se encontraron productos únicos.</small></label>";
+        }
+        
+        updateTotalMontoVenta(); 
+    }
+    
+    function onVentaSearch() {
+        const filter = f('venta-search').value.toLowerCase().trim();
+        const cards = f('venta-productos-list').querySelectorAll('.product-card');
+        
+        cards.forEach(card => {
+            const searchData = card.dataset.searchTerms;
+            if (searchData.includes(filter)) {
+                card.style.display = 'grid'; 
+            } else {
+                card.style.display = 'none'; 
+            }
+        });
+        
+        updateTotalMontoVenta();
+    }
+
+    // --- LÓGICA DE CÁLCULO DE MONTOS (SEPARADA) ---
+
+    function onMontoInput(input, context) {
+      let v = input.value.replace(/\D/g,""); 
+      input.value = v ? formatCurrency(v) : "";
+      if (context === 'pago') {
+        updateTotalMontoPago(); 
+      } else if (context === 'venta') {
+        updateTotalMontoVenta();
+      }
+    }
+
+    function updateTotalMontoPago() {
+        let total = 0;
+        const tipoPago = document.querySelector('input[name="tipo_pago"]:checked')?.value;
+        const pedidoId = f("id_pedido").value;
+        
+        if (tipoPago === 'Parcial') {
+            const cards = f("productos-list").querySelectorAll('.product-card');
+            cards.forEach(card => {
+                const check = card.querySelector('.product-checkbox');
+                if (check.checked) {
+                    card.classList.add('is-checked');
+                    const montoInput = card.querySelector('.product-monto');
+                    total += getNumericValue(montoInput); 
+                } else {
+                    card.classList.remove('is-checked');
+                }
+            });
+        } else if (tipoPago === 'Total') {
+            const productos = g_PedidosMap[pedidoId] || [];
+            total = productos.reduce((sum, prod) => sum + (prod.pendiente || 0), 0); 
+        }
+        f("monto").value = formatCurrency(total);
+    }
+    
+    function updateTotalMontoVenta() {
+        let total = 0;
+        const cards = f("venta-productos-list").querySelectorAll('.product-card');
+        cards.forEach(card => {
+            const check = card.querySelector('.product-checkbox');
+            if (check.checked && card.style.display !== 'none') { 
+                card.classList.add('is-checked');
+                const montoInput = card.querySelector('.product-monto');
+                total += getNumericValue(montoInput); 
+            } else {
+                card.classList.remove('is-checked');
+            }
+        });
+        f("monto").value = formatCurrency(total);
+    }
+
+
+    // ========================================================================================
+    // IV. LÓGICA DE EDICIÓN DE PAGOS (NUEVO)
+    // ========================================================================================
+
+    /**
+     * Carga los detalles del movimiento seleccionado para edición.
+     */
+    async function loadDetalleMovimiento() {
+        const idMovimiento = f('id_movimiento_edicion').value;
+        const detallesContainer = f('edicion-detalles');
+        const errorElement = f('edicion-error');
+        errorElement.textContent = '';
+        detallesContainer.style.display = 'none';
+
+        if (!idMovimiento) return;
+
+        f('btnEdicionText').textContent = 'Cargando...';
+        f('actualizarPagosBtn').disabled = true;
+
+        try {
+            const result = await gsRunAsync("getDetalleMovimiento", idMovimiento);
+
+            if (result.error) {
+                errorElement.textContent = result.error;
+                return;
+            }
+
+            g_DetalleEdicion = result.lineas;
+
+            // 1. Llenar Metodos de Pago
+            const metodoSelectEdicion = f('metodo_edicion');
+            metodoSelectEdicion.innerHTML = '<option value="">Seleccionar...</option>';
+            g_Metodos.forEach(metodo => {
+                metodoSelectEdicion.appendChild(new Option(metodo, metodo));
+            });
+            
+            // 2. Llenar campos
+            f('metodo_edicion').value = result.metodo;
+            f('comprobante_edicion').value = result.comprobante;
+            
+            // 3. Renderizar tabla
+            renderDetalleEdicionTable();
+            onMetodoPagoChangeEdicion(f('metodo_edicion')); // Inicializar visibilidad de comprobante
+
+            detallesContainer.style.display = 'block';
+
+        } catch (e) {
+            errorElement.textContent = e.message;
+        } finally {
+            f('btnEdicionText').textContent = 'Actualizar Pagos';
+            f('actualizarPagosBtn').disabled = false;
+        }
+    }
+    
+    function onMetodoPagoChangeEdicion(selectElement) {
+        // Lógica para mostrar/ocultar Comprobante en la vista de EDICIÓN
+        const metodo = selectElement.value.toLowerCase().trim();
+        const compGroup = f('comprobante-edicion-group');
+        
+        if (metodo && metodo !== "efectivo") {
+          compGroup.style.display = 'block';
+        } else {
+          compGroup.style.display = 'none';
+          f("comprobante_edicion").value = ""; 
+        }
+        f('comprobante-edicion-duplicado').style.display = 'none'; 
+        f('comprobante_edicion').classList.remove('error-input');
+    }
+
+    function renderDetalleEdicionTable() {
+        const container = f('detalle-tabla-container');
+        let html = '<table class="edit-table"><thead><tr><th>ID Producto</th><th>Costo Total</th><th>Pagado Prev.</th><th>Monto Actual</th></tr></thead><tbody>';
+        let total = 0;
+        
+        g_DetalleEdicion.forEach(linea => {
+            const costoPendiente = linea.costoTotal - linea.pagadoPrevio;
+            const isLinePaid = linea.monto >= linea.costoTotal;
+
+            html += `<tr data-row-index="${linea.rowIndex}" data-id-prod="${linea.idProd}" class="${isLinePaid ? 'is-paid' : ''}">
+                <td>${linea.idProd}</td>
+                <td>$${formatCurrency(linea.costoTotal)}</td>
+                <td>$${formatCurrency(linea.pagadoPrevio)}</td>
+                <td>
+                    <input type="text" value="${formatCurrency(linea.monto)}" class="monto-input" 
+                           oninput="onDetalleMontoChange(this)">
+                </td>
+            </tr>`;
+            total += linea.monto;
+        });
+
+        html += '</tbody></table>';
+        container.innerHTML = html;
+        f('total-edicion').textContent = formatCurrency(total);
+    }
+
+    function onDetalleMontoChange(inputElement) {
+        let v = inputElement.value.replace(/\D/g,""); 
+        inputElement.value = v ? formatCurrency(v) : "";
+
+        let newTotal = 0;
+        const totalElement = f('total-edicion');
+        const allInputs = f('detalle-tabla-container').querySelectorAll('.monto-input');
+        
+        allInputs.forEach(input => {
+            newTotal += getNumericValue(input);
+        });
+
+        totalElement.textContent = formatCurrency(newTotal);
+    }
+
+    async function actualizarPagos() {
+        limpiarErrores();
+        const idMovimiento = f('id_movimiento_edicion').value;
+        const metodo = f('metodo_edicion').value;
+        const comprobante = f('comprobante_edicion').value.trim();
+        const errorElement = f('edicion-error');
+        
+        // 1. Validaciones
+        if (!metodo) return errorElement.textContent = "Selecciona un método de pago.";
+        if (metodo.toLowerCase() !== 'efectivo' && !comprobante) return errorElement.textContent = "El Nro. Comprobante es obligatorio para este método.";
+        if (f('comprobante-edicion-duplicado').style.display === 'block') return errorElement.textContent = "Comprobante duplicado detectado.";
+
+        const lineasActualizadas = [];
+        let hayCambios = false;
+
+        const allRows = f('detalle-tabla-container').querySelectorAll('tr[data-row-index]');
+        allRows.forEach(row => {
+            const input = row.querySelector('.monto-input');
+            const newMonto = getNumericValue(input);
+            const originalLine = g_DetalleEdicion.find(l => l.rowIndex == row.dataset.rowIndex);
+            
+            lineasActualizadas.push({
+                rowIndex: Number(row.dataset.rowIndex),
+                idProd: row.dataset.idProd,
+                monto: newMonto
+            });
+
+            if (newMonto !== originalLine.monto || metodo !== originalLine.metodo || comprobante !== originalLine.comprobante) {
+                hayCambios = true;
+            }
+        });
+
+        if (!hayCambios) {
+             return errorElement.textContent = "No se detectaron cambios para actualizar.";
+        }
+        
+        f('btnEdicionText').style.display = 'none';
+        f('loadingEdicionSpinner').style.display = 'inline-block';
+        f('actualizarPagosBtn').disabled = true;
+
+        try {
+            const dataToUpdate = {
+                idMovimiento: idMovimiento,
+                metodo: metodo,
+                comprobante: comprobante,
+                lineas: lineasActualizadas
+            };
+
+            const response = await gsRunAsync("actualizarPagos", dataToUpdate);
+            
+            // ⚡ PROCESAR DATOS RECARGADOS AUTOMÁTICAMENTE
+            g_Categorias = response.updatedData.categories || {};
+            g_PedidosMap = response.updatedData.pedidosMap || {}; 
+            g_ProductosMap = response.updatedData.productosMap || {}; 
+            g_Metodos = response.updatedData.metodos || {}; 
+            g_MovimientosIds = response.updatedData.movimientosIds || {}; 
+
+            // RE-POBLAR INTERFAZ
+            populatePedidosSelect();
+            populateVentaProductosTable();
+            populateMovimientoIds();
+
+            mostrarAviso(`✅ Pago ID ${idMovimiento} actualizado. Nuevo Total: $${formatCurrency(response.nuevoMonto)}.`, "success");
+            
+            // Limpiar vista de edición
+            f('id_movimiento_edicion').value = '';
+            f('edicion-detalles').style.display = 'none';
+
+
+        } catch (e) {
+            errorHandler(e);
+        } finally {
+            f('btnEdicionText').style.display = 'inline';
+            f('loadingEdicionSpinner').style.display = 'none';
+            f('actualizarPagosBtn').disabled = false;
+        }
+    }
+
+
+    // ========================================================================================
+    // V. LÓGICA DE VALIDACIÓN (Comprobante)
+    // ========================================================================================
+    
+    let comprobanteTimer;
+    async function checkComprobanteDuplicado(inputElement) {
+        clearTimeout(comprobanteTimer);
+        
+        const comprobante = inputElement.value.trim();
+        const displayElement = inputElement.id === 'comprobante' ? f('comprobante-duplicado') : f('comprobante-edicion-duplicado');
+        const metodoElement = inputElement.id === 'comprobante' ? f('metodo_pago') : f('metodo_edicion');
+        const metodo = metodoElement.value.toLowerCase().trim();
+        
+        displayElement.style.display = 'none';
+        inputElement.classList.remove('error-input');
+        g_ComprobanteDuplicado = false;
+
+        if (!comprobante || metodo === 'efectivo') return;
+
+        comprobanteTimer = setTimeout(async () => {
+            try {
+                const isDuplicate = await gsRunAsync("checkComprobanteExists", comprobante);
+                if (isDuplicate) {
+                    displayElement.textContent = '❌ ¡Alerta! Este Nro. Comprobante ya existe.';
+                    displayElement.style.display = 'block';
+                    inputElement.classList.add('error-input');
+                    g_ComprobanteDuplicado = true;
+                }
+            } catch (e) {
+                console.error("Error al verificar comprobante:", e);
+            }
+        }, 800);
+    }
+
+
+    // ========================================================================================
+    // VI. FUNCIÓN PRINCIPAL (Guardar)
+    // ========================================================================================
+
+    function getSelectedPagosJSON() {
+      const productosPagados = [];
+      const cards = f("productos-list").querySelectorAll('.product-card');
+      cards.forEach(card => {
+        const check = card.querySelector('.product-checkbox');
+        if (check.checked && !card.classList.contains('is-paid')) { 
+          const monto = getNumericValue(card.querySelector('.product-monto'));
+          productosPagados.push({ id: card.dataset.idProd, monto: monto, costo: monto }); 
+        }
+      });
+      return JSON.stringify(productosPagados); 
+    }
+    
+    function getSelectedVentaJSON() {
+      const productosVendidos = [];
+      const cards = f("venta-productos-list").querySelectorAll('.product-card');
+      cards.forEach(card => {
+        const check = card.querySelector('.product-checkbox');
+        if (check.checked && card.style.display !== 'none') {
+          const monto = getNumericValue(card.querySelector('.product-monto'));
+          productosVendidos.push({
+            id: card.dataset.idProd,
+            idPedido: card.dataset.idPedido, 
+            monto: monto
+          });
+        }
+      });
+      return JSON.stringify(productosVendidos); 
+    }
+    
+    function getAllPagosJSON(pedidoId) {
+      if (!g_PedidosMap[pedidoId]) return null;
+      const productosPagados = [];
+      const productos = g_PedidosMap[pedidoId]; 
+      productos.forEach(prod => {
+          productosPagados.push({
+            id: prod.idProd,
+            monto: prod.pendiente || 0 
+          });
+      });
+      return JSON.stringify(productosPagados); 
+    }
+
+
+    async function guardar(){
+        limpiarErrores(); 
+        
+        const camposObligatorios = ["fecha", "tipo", "categoria", "monto", "metodo_pago"];
+        let hayErrores = false;
+        const nombresFaltantes = []; 
+        const categoriaSeleccionada = f("categoria").value.toLowerCase().trim();
+        const esPagoPedido = (categoriaSeleccionada === 'pago pedido');
+        const esPagoEnvio = (categoriaSeleccionada === 'pago envio');
+        const esVenta = (categoriaSeleccionada === 'venta');
+        const tipoPago = document.querySelector('input[name="tipo_pago"]:checked')?.value;
+        const metodoPago = f("metodo_pago").value;
+
+        // 1. Validaciones de campos
+        camposObligatorios.forEach(id => {
+            const el = f(id); 
+            if (id === 'monto') {
+                const monto = getNumericValue("monto");
+                if (monto <= 0 && (esPagoPedido || esVenta || esPagoEnvio)) { 
+                    nombresFaltantes.push("Monto (debe ser > 0 para esta categoría)");
+                    el.classList.add('error-input');
+                    hayErrores = true;
+                }
+            } else if (!el.value) { 
+                const labelEl = document.querySelector(`label[for="${id}"]`);
+                let nombreCampo = labelEl ? labelEl.textContent.replace(/\*/g, '').trim() : id; 
+                nombresFaltantes.push(nombreCampo);
+                el.classList.add('error-input');
+                hayErrores = true;
+            }
+        });
+
+        // 2. Validaciones condicionales
+        if (esPagoPedido) {
+          if (!f("id_pedido").value) {
+            nombresFaltantes.push("ID Pedido Relacionado");
+            f("id_pedido").classList.add('error-input');
+            hayErrores = true;
+          }
+          if (!tipoPago) {
+            nombresFaltantes.push("Modalidad de Pago (Total o Parcial)");
+            f("tipo-pago-group").classList.add('error-input'); 
+            hayErrores = true;
+          }
+          if (tipoPago === 'Parcial' && getSelectedPagosJSON() === '[]') {
+             if (getNumericValue('monto') === 0) {
+                 nombresFaltantes.push("Productos a Pagar (mínimo 1)");
+                 f("productos-list").classList.add('error-input');
+                 hayErrores = true;
+             }
+          }
+        } else if (esPagoEnvio) {
+            if (!f("id_pedido").value) {
+            nombresFaltantes.push("ID Pedido Relacionado");
+            f("id_pedido").classList.add('error-input');
+            hayErrores = true;
+          }
+        } else if (esVenta) {
+          if (getSelectedVentaJSON() === '[]') {
+            nombresFaltantes.push("Productos Vendidos (mínimo 1)");
+            f("venta-productos-list").classList.add('error-input');
+            hayErrores = true;
+          }
+        }
+        
+        // 3. Validación de Comprobante Duplicado
+        if (g_ComprobanteDuplicado) {
+            nombresFaltantes.push("Comprobante duplicado");
+            f('comprobante').classList.add('error-input');
+            hayErrores = true;
+        } else if (metodoPago && metodoPago.toLowerCase() !== 'efectivo' && !f("comprobante").value) {
+            nombresFaltantes.push("Nro. Comprobante (requerido para este método)");
+            f("comprobante").classList.add('error-input');
+            hayErrores = true;
+        }
+
+        if(hayErrores){ 
+            const unicos = [...new Set(nombresFaltantes)];
+            mostrarAviso("⚠️ Faltan campos obligatorios: <br>" + unicos.join(", "), "warning"); 
+            return; 
+        }
+
+        f("btnText").style.display = "none";
+        f("loadingSpinner").style.display = "inline-block";
+        f("guardarBtn").disabled = true;
+
+        try {
+            let productosJSON = null;
+            let idPedido = f("id_pedido").value;
+            
+            if (esVenta) {
+              productosJSON = getSelectedVentaJSON();
+              idPedido = null; 
+            } else if (esPagoPedido) {
+                if (tipoPago === 'Parcial') {
+                  productosJSON = getSelectedPagosJSON();
+                } else if (tipoPago === 'Total') {
+                  productosJSON = getAllPagosJSON(idPedido); 
+                }
+            }
+            
+            const d = {
+                fecha: f("fecha").value,
+                tipo: f("tipo").value,
+                categoria: f("categoria").value,
+                monto: getNumericValue("monto"), 
+                descripcion: f("descripcion").value.trim(),
+                skuOpcional: null, 
+                idPedido: idPedido, 
+                tipoPago: tipoPago || null, 
+                productosJSON: productosJSON,
+                metodoPago: f("metodo_pago").value,
+                comprobante: f("comprobante").value.trim()
+            };
+
+            const result = await gsRunAsync("registrarMovimiento", d); 
+
+            // ⚡ PROCESAR DATOS RECARGADOS AUTOMÁTICAMENTE
+            g_Categorias = result.updatedData.categories || {};
+            g_PedidosMap = result.updatedData.pedidosMap || {}; 
+            g_ProductosMap = result.updatedData.productosMap || {}; 
+            g_Metodos = result.updatedData.metodos || []; 
+            g_MovimientosIds = result.updatedData.movimientosIds || []; 
+            
+            // RE-POBLAR INTERFAZ
+            populatePedidosSelect();
+            populateVentaProductosTable();
+            populateMovimientoIds();
+            
+            let msg = `✅ Movimiento registrado!<br>ID: <strong>${result.newId}</strong>`;
+            if (result.actualizadoPedidos) {
+              msg += "<br>¡Estado en 'Pedidos' actualizado a 'En despacho'!";
+            }
+            mostrarAviso(msg, "success");
+            
+            // Limpiar formulario
+            f("tipo").value = "";
+            f("categoria").value = "";
+            f("categoria").disabled = true;
+            f("categoria").innerHTML = "<option value=''>Primero selecciona un Tipo...</option>";
+            f("monto").value = "";
+            f("monto").readOnly = false; 
+            f("metodo_pago").value = ""; 
+            f("descripcion").value = "";
+            f("comprobante").value = ""; 
+            f("comprobante-group").style.display = 'none';
+            
+            f("pedido-group").style.display = 'none';
+            f("venta-group").style.display = 'none'; 
+            f("id_pedido").value = "";
+            onPedidoChange(true); 
+            
+            f("tipo").focus(); 
+
+        } catch (error) {
+            errorHandler(error);
+        } finally {
+            f("btnText").style.display="inline";
+            f("loadingSpinner").style.display="none";
+            f("guardarBtn").disabled = false;
+        }
+    }
+    
+    function getAllPagosJSON(pedidoId) {
+      if (!g_PedidosMap[pedidoId]) return null;
+      const productosPagados = [];
+      const productos = g_PedidosMap[pedidoId]; 
+      productos.forEach(prod => {
+          productosPagados.push({
+            id: prod.idProd,
+            monto: prod.pendiente || 0 
+          });
+      });
+      return JSON.stringify(productosPagados); 
+    }
+
+    // ========================================================================================
+    // VII. FUNCIÓN DE AVISO MODAL
+    // ========================================================================================
+    
+    function mostrarAviso(mensaje, tipo = 'warning') {
+        const customAlert = A("customAlert");
+        const alertContent = customAlert.querySelector('.alert-content');
+        const alertIcon = A("alertIcon");
+        A("alertMessage").innerHTML = mensaje.replace(/\n/g, '<br>');
+        alertContent.classList.remove('alert-success', 'alert-error', 'alert-warning');
+        alertContent.classList.add(`alert-${tipo}`);
+        let iconHtml = '';
+        if (tipo === 'success') iconHtml = '✅';
+        else if (tipo === 'error') iconHtml = '❌';
+        else if (tipo === 'warning') iconHtml = '⚠️';
+        alertIcon.textContent = iconHtml;
+        customAlert.style.display = 'flex';
+    }
+
+    function ocultarAviso() {
+        A("customAlert").style.display = 'none';
+    }
+</script>
+</body>
+</html>
