@@ -1,0 +1,1259 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+/* ======================================================================== */
+/* --- PALETA DE COLORES Y VARIABLES GLOBALES (Diseño Restaurado) --- */
+/* ======================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+:root{
+    --primary: #D61A1A;         
+    --primary-hover: #B51212;   
+    --secondary: #007BFF;       
+    --secondary-hover: #0056B3; 
+    --bg: #ffffff;              
+    --text: #1f2937;            
+    --muted: #6b7280;           
+    --border: #d1d5db;          
+    --input-bg: #f9fafb;        
+    --success-color: #10B981;   
+    --warning-color: #F59E0B;   
+    --danger: var(--primary);   
+    --gap: 20px;
+}
+/* ======================================================================== */
+/* --- ESTILOS BASE Y LAYOUT (ADAPTADO A BARRA LATERAL) --- */
+/* ======================================================================== */
+body{
+    font-family: "Poppins", sans-serif;
+    padding: 0; 
+    margin: 0;
+    background: #f0f0f0; 
+    color: var(--text);
+    font-weight: 400;
+    height: 100vh; 
+    box-sizing: border-box;
+}
+.form-wrap{
+    width: 100%; 
+    height: 100%;
+    max-height: 100%;
+    background: var(--bg);
+    padding: 20px 20px 30px 20px; 
+    border-radius: 0; 
+    overflow-y: auto;
+    box-shadow: none; 
+    border: none;
+    margin: 0; 
+    box-sizing: border-box;
+}
+h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--primary);
+    margin: 0 0 15px 0;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #f3f4f6;
+}
+.grid-2-col {
+    display: grid;
+    grid-template-columns: 1fr; 
+    gap: 15px; 
+    margin-bottom: var(--gap);
+}
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+label{
+    display: block;
+    font-size: 14px;
+    font-weight: 500; 
+    color: var(--text);
+    margin: 0 0 4px 0;
+}
+label small {
+    font-weight: 400;
+    color: var(--muted);
+    margin-left: 5px;
+}
+/* ======================================================================== */
+/* --- ESTILOS DE INPUTS Y SELECTS (RESTAURADO) --- */
+/* ======================================================================== */
+select,
+input[type="date"],
+input[type="text"],
+input[type="number"]{
+    height: 44px; 
+    padding: 10px 12px;
+    width: 100%;
+    font-size: 14px;
+    background: var(--input-bg);
+    box-sizing: border-box;
+    border-radius: 6px; 
+    border: 1px solid var(--border);
+    transition: border-color .15s ease, box-shadow .15s ease;
+    -webkit-appearance: none;
+    appearance: none;
+}
+input:focus, select:focus{
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(214, 26, 26, 0.2); 
+    background: var(--bg);
+}
+select {
+    background-color: var(--input-bg);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%234b5563%22%20d%3D%22M4.5%207.5l-3-3L1.5%206l4.5%204.5L10.5%206l-1.5-1.5z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px; 
+}
+#costo, #precio {
+    text-align: right;
+}
+/* ======================================================================== */
+/* --- ESTILOS DE AUTOCOMPLETE --- */
+/* ======================================================================== */
+.custom-select-container {
+    position: relative;
+}
+.custom-select-container input[type="text"] {
+    border-radius: 6px; 
+    background: var(--input-bg);
+}
+.suggestions-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    top: 100%; 
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-top: none; 
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    display: none; 
+}
+.suggestions-list li {
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text);
+    transition: background-color 0.15s ease;
+}
+.suggestions-list li:hover,
+.suggestions-list li.active {
+    background: #f3f4f6; 
+}
+/* ======================================================================== */
+/* --- UTILIDADES DE BOTONES Y FECHA (RESTAURADO) --- */
+/* ======================================================================== */
+button{
+    padding: 10px 15px;
+    border-radius: 6px;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background .15s ease, opacity .15s;
+    white-space: nowrap; 
+}
+#guardarBtn{
+    width: 100%;
+    background: var(--primary);
+    color: #fff;
+    margin-top: 20px;
+}
+#guardarBtn:hover{ background: var(--primary-hover); }
+#guardarBtn[disabled]{ opacity: .65; cursor: not-allowed; }
+#abrirFolderBtn {
+  display: none; 
+  padding: 6px 12px;
+  font-size: 13px;
+  background: var(--secondary);
+  color: #fff;
+}
+#abrirFolderBtn:hover { background: var(--secondary-hover); }
+.date-input-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.date-input-group input {
+    flex-grow: 1;
+}
+.btn-hoy { 
+    background: #e5e7eb; 
+    border: 1px solid #d1d5db;
+    color: var(--text);
+    padding: 0 10px;
+    height: 44px;
+}
+.btn-hoy:hover { background: #d1d5db; }
+.btn-hoy svg { stroke: var(--text); width: 20px; height: 20px; }
+.spinner{ 
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    vertical-align: middle;
+}
+@keyframes spin{ 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+/* ======================================================================== */
+/* --- SECCIONES DE INFORMACIÓN DINÁMICA (RESTAURADO) --- */
+/* ======================================================================== */
+.info-row {
+    display: none; 
+    margin-top: 5px;
+    margin-bottom: 15px;
+    padding: 8px 10px;
+    background: var(--input-bg);
+    border-left: 3px solid var(--primary);
+    border-radius: 4px;
+    font-size: 13px;
+    color: var(--text);
+}
+#ganancia-info {
+    border-left: 3px solid var(--success-color);
+    background: #ecfdf5; 
+    color: #065f46;
+}
+.info-row strong {
+    font-weight: 600;
+    color: var(--primary); 
+    margin-left: 5px;
+}
+#ganancia-info strong {
+    color: #065f46;
+}
+#info-modelo-row {
+    display: none; 
+    align-items: center; 
+    gap: 10px;
+    margin-bottom: var(--gap);
+    margin-top: 5px;
+}
+#conteo-modelo {
+    flex-grow: 1;
+    font-size: 13px;
+    padding: 8px 10px;
+    background: #ecfdf5; 
+    border: 1px solid #a7f3d0;
+    border-radius: 4px;
+    color: #065f46;
+}
+#conteo-modelo strong { color: #065f46; }
+/* ======================================================================== */
+/* --- DROPZONE Y PREVIEW DE IMAGEN (RESTAURADO) --- */
+/* ======================================================================== */
+#dropzone{
+    border: 2px dashed var(--border); 
+    padding: 20px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 10px;
+    border-radius: 6px;
+    background: var(--input-bg);
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease;
+}
+#dropzone:hover{
+    border-color: var(--secondary);
+    background: #f0f8ff;
+}
+#dropzone.captured{
+    border: 2px solid var(--success-color);
+    background: #fff;
+    padding: 15px;
+}
+#dropzone img{
+    display: none;
+    border-radius: 4px;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 1px solid #e5e7eb;
+}
+#dropzone #dropicon {
+    margin-bottom: 8px;
+}
+#removeImg{
+    background: #fef2f2; 
+    border: 1px solid #fecaca;
+    color: var(--danger); 
+    width: auto;
+    height: auto;
+    padding: 6px 15px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 4px;
+    display: none;
+}
+#removeImg:hover {
+    background: #fee2e2;
+}
+/* ======================================================================== */
+/* --- ESTADO: ERROR (RESTAURADO) --- */
+/* ======================================================================== */
+input.error-input, select.error-input, #dropzone.error-input {
+    border-color: var(--danger) !important;
+    box-shadow: 0 0 0 2px rgba(214, 26, 26, 0.2);
+}
+#dropzone.error-input {
+    border: 2px dashed var(--danger) !important;
+    background: #fef2f2;
+}
+/* ======================================================================== */
+/* --- ESTILOS DE AVISO MODAL (RESTAURADO) --- */
+/* ======================================================================== */
+#customAlert {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+.alert-content {
+    background: white;
+    padding: 30px 40px;
+    border-radius: 10px; 
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.15); 
+    max-width: 350px; 
+    width: 90%;
+    text-align: center;
+    animation: fadeInScale 0.2s ease-out;
+}
+#alertIcon {
+    font-size: 38px;
+    display: block;
+    margin-bottom: 12px;
+}
+#alertMessage {
+    margin: 10px 0 20px 0;
+    font-size: 15px;
+    line-height: 1.5; 
+    color: var(--text);
+}
+.alert-content button {
+    width: 100%;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 10px 0;
+    transition: background 0.15s ease;
+}
+@keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+.alert-success #alertIcon { color: var(--success-color); }
+.alert-error #alertIcon { color: var(--danger); } 
+.alert-warning #alertIcon { color: var(--warning-color); }
+.alert-success button { background-color: var(--success-color); }
+.alert-error button { background-color: var(--danger); }
+.alert-warning button { background-color: var(--warning-color); }
+
+/* ⚡ ¡NUEVOS ESTILOS AÑADIDOS AL FINAL! ⚡ */
+.header-with-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #f3f4f6;
+    margin-bottom: 15px;
+}
+.header-with-button h2 {
+    margin: 0;
+    border: none;
+}
+#refreshDataBtn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 6px 8px; /* Botón más pequeño */
+    height: 32px;
+    width: 32px;
+    line-height: 1;
+}
+#refreshDataBtn:hover {
+    background: var(--input-bg);
+    border-color: var(--secondary);
+    color: var(--secondary);
+}
+#refreshDataBtn svg {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2.5;
+}
+/* Spinner oscuro para botones claros */
+.spinner-dark {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(0,0,0,0.2);
+    border-top-color: var(--text);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    vertical-align: middle;
+}
+#reemplazo-container input[type="checkbox"] {
+    width: auto;
+    height: auto;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+</style>
+</head>
+<body>
+<div id="customAlert" style="display:none;">
+    <div class="alert-content">
+        <span id="alertIcon"></span>
+        <p id="alertMessage"></p>
+        <button onclick="ocultarAviso()">Aceptar</button>
+    </div>
+</div>
+<div class="form-wrap">
+    
+    <div class="header-with-button">
+        <h2>Información Básica</h2>
+        <button type="button" id="refreshDataBtn" onclick="refrescarDatos()" title="Actualizar listas (Marcas, Modelos, etc.)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L20.49 9M3.51 15l-2.02 3.36A9 9 0 0 0 18.5 22.49L20.49 15"></path></svg>
+            <span class="spinner-dark" style="display:none;"></span>
+        </button>
+    </div>
+    
+    <div class="grid-2-col">
+        <div class="form-group">
+            <label for="fecha">Fecha</label>
+            <div class="date-input-group">
+                <input type="date" id="fecha">
+                <button type="button" id="fechaHoy" class="btn-hoy" title="Fecha de hoy" aria-label="Fecha de hoy">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                </button>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="proveedor">Proveedor *</label>
+            <select id="proveedor" required><option></option></select>
+            <div id="sku-info" class="info-row">
+                SKU Generado: <strong id="sku-display"></strong>
+            </div>
+        </div>
+    </div>
+    
+    <h2>Detalles del Producto</h2>
+    <div class="form-group" style="margin-bottom: var(--gap);">
+        <label for="nombre">Nombre *</label>
+        <input id="nombre" type="text" required placeholder="Ej: Zapatilla Clásica de Lona">
+    </div>
+    <div class="grid-2-col">
+        <div class="form-group">
+            <label for="marca-input">Marca *</label>
+            <div class="custom-select-container">
+                <input type="text" id="marca-input" required placeholder="Escriba para buscar o ingrese una marca...">
+                <ul id="marca-suggestions" class="suggestions-list"></ul>
+                <input type="hidden" id="marca" name="marca"> </div>
+        </div>
+        <div class="form-group">
+            <label for="modelo-input">Modelo *</label>
+            <div class="custom-select-container">
+                <input type="text" id="modelo-input" required placeholder="Escriba para buscar o ingrese un modelo nuevo...">
+                <ul id="modelo-suggestions" class="suggestions-list"></ul>
+                <input type="hidden" id="modelo" name="modelo"> </div>
+        </div>
+        </div>
+    <div id="manual-tipo-group" class="form-group" style="display:none; margin-bottom: var(--gap);">
+        <label for="manual-tipo-select">Asignar Categoría/Tipo (Modelo Nuevo) *</label>
+        <select id="manual-tipo-select" required onchange="onManualTipoChange()"><option value="">Seleccionar Categoría...</option></select>
+    </div>
+    <div id="tipo-info" class="info-row" style="margin-bottom: var(--gap);">
+      Categoría/Tipo: <strong id="tipo-display"></strong>
+    </div>
+    <div class="grid-2-col">
+        <div class="form-group">
+            <label for="genero">Género *</label>
+            <select id="genero" required><option></option></select>
+        </div>
+    </div>  
+    <div id="info-modelo-row">
+        <div id="conteo-modelo" class="info-label"></div>
+        <button type="button" id="abrirFolderBtn" onclick="abrirFolder()">
+            Abrir Folder
+        </button>
+    </div>
+
+    <div id="reemplazo-container" style="display: none; margin-bottom: var(--gap); background: #fef2f2; border: 1px solid #fecaca; padding: 12px; border-radius: 6px;">
+        <label style="font-size: 14px; font-weight: 500; display: block; margin-bottom: 8px; color: var(--danger); cursor: pointer;">
+            <input type="checkbox" id="reemplazar-check" onchange="toggleReemplazoInput(this.checked)">
+            Reemplazar un Sku existente
+        </label>
+        <div id="reemplazo-input-group" style="display: none; position: relative;">
+            <label for="sku-a-reemplazar" style="font-size: 13px;">Sku a Reemplazar *</label>
+            <input type="text" id="sku-a-reemplazar" placeholder="Ingrese el Sku a reemplazar (ej: P001)" style="margin-top: 4px;">
+            <small style="font-size: 11px; color: var(--muted); margin-top: 4px; display: block;">El Sku antiguo será marcado como 'Reemplazado' y su imagen será borrada.</small>
+        </div>
+    </div>
+    <h2>Precios y Costos</h2>
+    <div class="grid-2-col">
+        <div class="form-group">
+            <label for="costo">Costo (sin Tarifa) *</label>
+            <input id="costo" type="text" inputmode="numeric" required placeholder="0.00">
+            </div>
+        <div class="form-group">
+            <label for="precio">Precio de Venta</label>
+            <input id="precio" type="text" inputmode="numeric" placeholder="0.00">
+            <div id="ganancia-info" class="info-row" style="margin: 5px 0 0 0;">
+                Ganancia Estimada: <strong id="ganancia-display"></strong>
+            </div>
+        </div>
+    </div>
+
+    <h2>Imagen</h2>
+    <div class="form-group">
+        <label for="dropzone">Imagen * <small>(Arrastra o selecciona)</small></label>
+        <div id="dropzone">
+            <img id="preview">
+            <div id="dropicon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="var(--muted)" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15.5v-4h4v4h-4zm5-6h-4v-4h4v4z"/></svg>
+                <p style="margin: 5px 0 0 0; font-size: 13px;">Arrastra tu imagen aquí o haz click</p>
+            </div>
+            <button id="removeImg" type="button">
+                Eliminar imagen
+            </button>
+        </div>
+    </div>
+      
+    <button id="guardarBtn" onclick="guardar()">
+        <span id="btnText">Registrar Producto</span>
+        <span id="loadingSpinner" style="display:none; margin-left:6px;"><span class="spinner"></span></span>
+    </button>
+</div>
+
+<script>
+// ========================================================================================
+// I. VARIABLES Y UTILIDADES GLOBALES
+// (Sección I sin cambios)
+// ========================================================================================
+    const f = id => document.getElementById(id);
+    const A = id => document.getElementById(id);
+    let imagenArrastrada = null;
+    let modelosPorMarca = {}; 
+    let allMarcas = []; 
+    let allModelos = []; 
+    let allTipos = []; 
+    let timerCosto, timerPrecio;
+    const DEBOUNCE_TIME = 500;
+    const skuDisplay = f("sku-display");
+    const skuInfo = f("sku-info");
+    const tipoDisplay = f("tipo-display");
+    const tipoInfo = f("tipo-info");
+    const gananciaDisplay = f("ganancia-display");
+    const gananciaInfo = f("ganancia-info");
+    // 'internalSku' AHORA ES SOLO UNA PREVISUALIZACIÓN. El servidor genera el SKU real.
+    let internalSku = ""; 
+    let internalCostoTotal = 0; 
+    let internalTipo = "";
+    const marcaInput = f("marca-input");
+    const marcaHidden = f("marca");
+    const modeloInput = f("modelo-input");
+    const modeloHidden = f("modelo");
+    const modeloSuggestions = f("modelo-suggestions");
+    const manualTipoGroup = f("manual-tipo-group");
+    const manualTipoSelect = f("manual-tipo-select");
+
+    function gsRunAsync(funcName, ...args){
+        return new Promise((resolve, reject) => {
+            const run = google.script.run
+                .withSuccessHandler(resolve)
+                .withFailureHandler(reject);
+
+            if (run[funcName]) {
+                run[funcName](...args); 
+            } else {
+                reject(new Error(`La función de servidor "${funcName}" no se encontró en code.gs.`));
+            }
+        });
+    }
+    function errorHandler(error) {
+        mostrarAviso("❌ Error en la operación: " + error.message, "error");
+        f("btnText").style.display = "inline";
+        f("loadingSpinner").style.display = "none";
+        f("guardarBtn").disabled = false;
+        console.error(error);
+    }
+    function limpiarErrores() {
+        document.querySelectorAll('.error-input').forEach(el => {
+            el.classList.remove('error-input');
+        });
+    }
+    function getNumericValue(id) {
+        const el = f(id);
+        if (el && el.tagName === 'INPUT') {
+            return Number(el.value.replace(/[.,]/g, "").replace(/\s/g, "")) || 0;
+        }
+        return 0; 
+    }
+
+// ========================================================================================
+// II. FUNCIONES DE INICIALIZACIÓN (Setup)
+// ⚡ ¡SECCIÓN REFACTORIZADA! ⚡
+// ========================================================================================
+    f("fechaHoy").onclick = () => {
+        const hoy = new Date();
+        const yyyy = hoy.getFullYear();
+        const mm = String(hoy.getMonth() + 1).padStart(2, "0");
+        const dd = String(hoy.getDate()).padStart(2, "0");
+        f("fecha").value = `${yyyy}-${mm}-${dd}`;
+    };
+    function setupAutocomplete(inputId, hiddenId, listId, dataList, onSelectCallback = () => {}) {
+        const input = f(inputId);
+        const hidden = f(hiddenId);
+        const list = f(listId);
+        let activeItem = -1; 
+        input.value = "";
+        hidden.value = "";
+        list.innerHTML = ''; 
+        const selectItem = (itemText) => {
+            input.value = itemText;
+            hidden.value = itemText; 
+            list.style.display = 'none';
+            input.focus(); 
+            const isKnown = dataList.includes(itemText);
+            onSelectCallback(itemText, isKnown);
+        }
+        const updateSuggestions = (showAll = false) => {
+            const query = input.value.trim().toLowerCase();
+            list.innerHTML = ''; 
+            list.style.display = 'none';
+            input.classList.remove('error-input'); 
+            activeItem = -1; 
+            if (!showAll && query.length === 0) return; 
+            let filtered = [];
+            if (query.length > 0) {
+                filtered = dataList.filter(item => item.toLowerCase().includes(query)).slice(0, 10);
+            } else if (showAll) {
+                filtered = dataList.slice(0, 10);
+            }
+            if (filtered.length > 0) {
+                filtered.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    li.onmousedown = (e) => {
+                        e.preventDefault(); 
+                        selectItem(item);
+                    };
+                    li.onmouseup = () => {}; 
+                    list.appendChild(li);
+                });
+                list.style.display = 'block';
+            }
+        };
+        input.oninput = () => updateSuggestions(false); 
+        input.onfocus = () => updateSuggestions(true);
+        input.onblur = () => {
+            setTimeout(() => {
+                list.style.display = 'none';
+                const currentInputValue = input.value.trim();
+                if (currentInputValue === '') {
+                    hidden.value = '';
+                    onSelectCallback('', false);
+                    return;
+                }
+                if (currentInputValue !== hidden.value) {
+                    hidden.value = currentInputValue;
+                    const isKnown = dataList.includes(currentInputValue);
+                    onSelectCallback(currentInputValue, isKnown);
+                }
+            }, 150);
+        };
+        input.onkeydown = (e) => {
+            const items = Array.from(list.children);
+            const numItems = items.length;
+            if (numItems > 0 && list.style.display === 'block') {
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault(); 
+                    items[activeItem]?.classList.remove('active');
+                    activeItem = (activeItem + 1) % numItems;
+                    items[activeItem].classList.add('active');
+                    items[activeItem].scrollIntoView({ block: 'nearest' });
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault(); 
+                    items[activeItem]?.classList.remove('active');
+                    activeItem = (activeItem - 1 + numItems) % numItems;
+                    items[activeItem].classList.add('active');
+                    items[activeItem].scrollIntoView({ block: 'nearest' });
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (activeItem > -1) {
+                        selectItem(items[activeItem].textContent);
+                    } else {
+                        input.blur(); 
+                    }
+                }
+            } else if (e.key === 'Enter') {
+                 e.preventDefault();
+                 input.blur();
+            }
+        };
+    }
+    
+    /**
+     * ⚡ ¡NUEVA!
+     * Función helper que recibe los datos y puebla los dropdowns y autocompletes.
+     * Se usa tanto en la carga inicial como en la actualización manual.
+     */
+    function _handleDropdownData(values) {
+        modelosPorMarca = values.ModelosPorMarca || {};
+        allMarcas = values.Marca || []; 
+        allModelos = values.Modelo || [];
+        allTipos = values.Tipo || []; 
+        
+        // Guardar valores actuales para no borrarlos
+        const currentProveedor = f("proveedor").value;
+        const currentGenero = f("genero").value;
+
+        // Actualizar autocompletes (estos sí se resetean, lo cual es esperado)
+        setupAutocomplete("marca-input", "marca", "marca-suggestions", allMarcas, onMarcaChange);
+        setupModeloAutocomplete(allModelos);
+        
+        // Actualizar Selects (preservando el valor)
+        [["genero","Género"],["proveedor","Proveedor"]].forEach(([id,h])=>{ 
+            const sel = f(id);
+            sel.innerHTML = "<option value=''>Seleccionar...</option>"; 
+            if(values[h]) values[h].forEach(v => sel.appendChild(new Option(v,v)));
+        });
+        
+        // Restaurar valores
+        f("proveedor").value = currentProveedor;
+        f("genero").value = currentGenero;
+
+        // Actualizar lista de Tipos
+        manualTipoSelect.innerHTML = "<option value=''>Seleccionar Categoría...</option>";
+        allTipos.forEach(v => manualTipoSelect.appendChild(new Option(v,v)));
+    }
+    
+    /**
+     * ⚡ ¡ACTUALIZADA!
+     * Ahora solo llama a los helpers.
+     */
+    function cargarDropdowns(){
+        gsRunAsync("getDropdownData")
+            .then(_handleDropdownData) // Usar la nueva función helper
+            .catch(errorHandler);
+    }
+
+    function setupModeloAutocomplete(dataList) {
+        setupAutocomplete("modelo-input", "modelo", "modelo-suggestions", dataList, onModeloChange);
+    }
+    window.onload = () => {
+        f("removeImg").style.display = "none";
+        cargarDropdowns();
+        f("proveedor").focus();
+        f("fechaHoy").click(); 
+        f("proveedor").addEventListener("change", generarSKU);
+    };
+
+// ========================================================================================
+// III. MANEJO DE EVENTOS (Listeners Refactorizados)
+// ========================================================================================
+
+    /**
+     * ⚡ ¡NUEVA FUNCIÓN!
+     * Llama al servidor para obtener los datos más recientes de los dropdowns
+     * sin tener que cerrar el formulario.
+     */
+    async function refrescarDatos() {
+        const btn = f('refreshDataBtn');
+        const icon = btn.querySelector('svg');
+        const spinner = btn.querySelector('.spinner-dark');
+        
+        btn.disabled = true;
+        if(icon) icon.style.display = 'none';
+        if(spinner) spinner.style.display = 'inline-block';
+
+        try {
+            const values = await gsRunAsync("getDropdownData");
+            _handleDropdownData(values); // Reutiliza la lógica de llenado
+            
+            // Muestra un aviso de éxito que se cierra solo
+            mostrarAviso("✅ Listas actualizadas.", "success");
+            setTimeout(ocultarAviso, 2000); // Oculta el aviso después de 2 segundos
+            
+        } catch (error) {
+            errorHandler(error); // errorHandler ya muestra un aviso
+        } finally {
+            btn.disabled = false;
+            if(icon) icon.style.display = 'inline-block';
+            if(spinner) spinner.style.display = 'none';
+        }
+    }
+
+    /**
+     * ⚡ ¡NUEVA FUNCIÓN!
+     * Muestra u oculta el campo de input para el Sku a reemplazar.
+     */
+    function toggleReemplazoInput(show) {
+        const inputGroup = f("reemplazo-input-group");
+        const inputField = f("sku-a-reemplazar");
+        inputGroup.style.display = show ? 'block' : 'none';
+        if (!show) {
+            inputField.value = ""; // Limpiar el valor si se desmarca
+            inputField.classList.remove('error-input');
+        }
+    }
+
+    function onMarcaChange(marca, isKnown) {
+        tipoInfo.style.display = 'none';
+        internalTipo = "";
+        f("info-modelo-row").style.display = 'none';
+        manualTipoGroup.style.display = 'none';
+        modeloInput.value = "";
+        modeloHidden.value = "";
+        
+        // ⚡ ¡CAMBIO! Ocultar y resetear el bloque de reemplazo
+        f("reemplazo-container").style.display = 'none';
+        f("reemplazar-check").checked = false;
+        toggleReemplazoInput(false);
+        // ----------------------------------------------------
+
+        let newModelList = [];
+        if (marca && modelosPorMarca[marca]) {
+            newModelList = modelosPorMarca[marca];
+        } else {
+            newModelList = allModelos;
+        }
+        setupModeloAutocomplete(newModelList);
+    }
+    function onManualTipoChange() {
+        const selectedType = manualTipoSelect.value;
+        internalTipo = selectedType;
+        tipoDisplay.textContent = selectedType;
+        tipoInfo.style.display = selectedType ? 'block' : 'none';
+    }
+    f("costo").addEventListener("input", ()=>{
+        let v=f("costo").value.replace(/\D/g,"");
+        f("costo").value=v?Number(v).toLocaleString("es-CO"):"";
+        if (!v) {
+            gananciaInfo.style.display = 'none';
+        }
+        clearTimeout(timerCosto);
+        timerCosto=setTimeout(calcularPrecioAutomatico,DEBOUNCE_TIME);
+    });
+    f("precio").addEventListener("input", ()=>{
+        let v=f("precio").value.replace(/\D/g,"");
+        f("precio").value=v?Number(v).toLocaleString("es-CO"):"";
+        if (!v) {
+            gananciaInfo.style.display = 'none';
+        }
+        clearTimeout(timerPrecio);
+        timerPrecio=setTimeout(calcularGananciaManual,DEBOUNCE_TIME);
+    });
+
+// ========================================================================================
+// IV. LÓGICA DE NEGOCIO (Cálculos y Lookups)
+// (Sección IV sin cambios)
+// ========================================================================================
+    function generarSKU(){
+        const proveedor = f("proveedor").value; // <-- No necesita .trim().toLowerCase() aquí
+        if(!proveedor) {
+            internalSku = "";
+            skuInfo.style.display = 'none';
+            return;
+        }
+        // 'getUltimoSKU' AHORA ES SOLO PARA VISTA PREVIA
+        gsRunAsync("getUltimoSKU", proveedor) 
+            .then(res=>{
+                let n = (res.ultimo || 0) + 1;
+                internalSku = `${res.prefijo || ''}${String(n).padStart(3,"0")}`;
+                skuDisplay.textContent = internalSku + " (previa)"; // Indicamos que es una previa
+                skuInfo.style.display = 'block';     
+            })
+            .catch(errorHandler);
+    }
+    function onModeloChange(modelo, isKnownModel){
+        const proveedor = f("proveedor").value;
+        const conteoDiv = f("conteo-modelo"); 
+        const infoRow = f("info-modelo-row"); 
+        const abrirFolderBtn = f("abrirFolderBtn"); 
+        
+        // ⚡ ¡CAMBIO! Ocultar y resetear el bloque de reemplazo al inicio
+        const reemplazoContainer = f("reemplazo-container");
+        reemplazoContainer.style.display = 'none';
+        f("reemplazar-check").checked = false;
+        toggleReemplazoInput(false);
+        // ----------------------------------------------------
+
+        tipoInfo.style.display = 'none';
+        internalTipo = "";
+        conteoDiv.innerHTML = "";
+        infoRow.style.display = 'none'; 
+        abrirFolderBtn.style.display = 'none'; 
+        manualTipoGroup.style.display = 'none'; 
+        
+        if(!modelo) {
+            generarSKU();
+            return;
+        }
+
+        infoRow.style.display = 'flex'; 
+        reemplazoContainer.style.display = 'block'; // ⚡ ¡CAMBIO! Mostrar el contenedor de reemplazo
+        
+        generarSKU(proveedor); // Sigue llamando a la previa
+        if (isKnownModel) {
+            gsRunAsync("getModeloInfo", modelo)
+                .then(res => {
+                    const { conteo, tipo } = res;
+                    if (tipo) {
+                        internalTipo = tipo;
+                        tipoDisplay.textContent = tipo;
+                        tipoInfo.style.display = 'block';
+                    } else {
+                        conteoDiv.innerHTML = `⚠️ Modelo conocido, pero no tiene Categoría asignada.`;
+                        manualTipoGroup.style.display = 'flex';
+                    }
+                    if (conteo > 0) {
+                        conteoDiv.innerHTML = `📦 Existencias de '${modelo}': <strong>${conteo}</strong> unidades.`;
+                        abrirFolderBtn.style.display = 'block'; 
+                    } else {
+                        conteoDiv.innerHTML = `⭐ Modelo '${modelo}' es nuevo/sin existencias.`;
+                        abrirFolderBtn.style.display = 'none'; 
+                    }
+                })
+                .catch(errorHandler);
+        } else {
+            modeloHidden.value = modelo;
+            manualTipoGroup.style.display = 'flex';
+            manualTipoSelect.value = ''; 
+            conteoDiv.innerHTML = `⭐ Modelo '${modelo}' es nuevo. **Requiere Categoría Manual.**`;
+            abrirFolderBtn.style.display = 'none'; 
+            mostrarAviso(`⚠️ El Modelo **${modelo}** es nuevo. Por favor, asigne una Categoría/Tipo manualmente.`, "warning");
+        }
+    }
+    function calcularPrecioAutomatico(){
+        let costo = getNumericValue("costo");
+        if (costo === 0) {
+            internalCostoTotal = 0;
+            gananciaInfo.style.display = 'none';
+            f("precio").value = "";
+            return;
+        }
+        gsRunAsync("getTarifaAndMargen")
+            .then(res => {
+                const { tarifa, margen } = res;
+                let costoTotal = costo + tarifa;
+                internalCostoTotal = costoTotal; 
+                const preciosFijos=[100000,120000,130000,140000,150000];
+                const ideal = costoTotal * (1 + margen);
+                let precio = preciosFijos.find(p=>p>=ideal); 
+                if (!precio || precio > 150000) {
+                    precio = 0; 
+                }
+                f("precio").value = precio ? precio.toLocaleString("es-CO") : "";
+                calcularGananciaManual();
+            })
+            .catch(errorHandler);
+    }
+    function calcularGananciaManual(){
+        const costoTotal = internalCostoTotal; 
+        const precio = getNumericValue("precio");
+        const ganancia = precio - costoTotal;
+        if (costoTotal > 0 && precio > 0) {
+            gananciaDisplay.textContent = ganancia.toLocaleString("es-CO", { style: 'currency', currency: 'COP', minimumFractionDigits: 0 });
+            gananciaInfo.style.display = 'block';
+        } else {
+            gananciaInfo.style.display = 'none';
+        }
+    }
+    
+// ========================================================================================
+// V. MANEJO DE IMAGEN Y DROPZONE
+// (Sección V sin cambios)
+// ========================================================================================
+    function manejarImagenDrop(file){
+        if(!file) return mostrarAviso("No se seleccionó ningún archivo.", "warning");
+        if(!file.type.startsWith("image/")) return mostrarAviso("Solo se permiten archivos de imagen (JPG, PNG, etc.).", "warning");
+        resizeImage(file,800,dataURL=>{
+            imagenArrastrada = dataURL;
+            const preview = f("preview");
+            preview.src = dataURL;
+            preview.style.display = "block";
+            f("dropicon").style.display = "none";
+            f("removeImg").style.display = "block";
+            f("dropzone").classList.add("captured");
+            f("dropzone").classList.remove('error-input');
+        });
+    }
+    function resizeImage(file,maxWidth,callback){
+        const reader = new FileReader();
+        reader.onload = e => {
+            const img = new Image();
+            img.onload = () => {
+                const scale = Math.min(1, maxWidth / img.width);
+                const canvas = document.createElement("canvas");
+                canvas.width = img.width * scale;
+                canvas.height = img.height * scale;
+                canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
+                callback(canvas.toDataURL("image/jpeg",0.7));
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+    const drop = f("dropzone");
+    drop.onclick = () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = (e) => manejarImagenDrop(e.target.files[0]);
+        input.click();
+    };
+    drop.ondragover = e => { e.preventDefault(); drop.classList.add("dragover"); };
+    drop.ondragleave = e => { drop.classList.remove("dragover"); };
+    drop.ondrop = e => {
+        e.preventDefault();
+        drop.classList.remove("dragover");
+        manejarImagenDrop(e.dataTransfer.files[0]);
+    };
+    f("removeImg").onclick = (e) => {
+        e.stopPropagation(); 
+        imagenArrastrada = null;
+        f("preview").style.display = "none";
+        f("preview").src = "";
+        f("dropicon").style.display = "";
+        drop.classList.remove("captured");
+        f("removeImg").style.display = "none";
+        f("dropzone").classList.remove('error-input');
+    };
+
+// ========================================================================================
+// VI. ⚡ ¡FUNCIÓN PRINCIPAL CORREGIDA! (Guardar)
+// ========================================================================================
+
+    async function guardar(){
+        limpiarErrores(); 
+        
+        const camposObligatorios = ["fecha","marca","modelo","proveedor","genero","costo", "nombre"];
+        const camposConInputVisible = { "marca": "marca-input", "modelo": "modelo-input" }; 
+        let hayErrores = false;
+        const nombresFaltantes = []; 
+
+        // ⚡ --- ¡CORRECCIÓN DEL TYPO! ---
+        camposObligatorios.forEach(id=>{
+        // ---------------------------------
+            const el = f(id); 
+            const inputId = camposConInputVisible[id] || id; 
+            const inputEl = f(inputId);
+            
+            if(!el.value) { 
+                const displayEl = inputEl || el;
+                
+                const labelEl = document.querySelector(`label[for="${inputId}"]`) || document.querySelector(`label[for="${id}"]`);
+                let nombreCampo = labelEl ? labelEl.textContent.trim().replace(/Modelo .*/,"Modelo") : id; 
+
+                nombresFaltantes.push(nombreCampo.replace(/\*/g, '').trim());
+                displayEl.classList.add('error-input');
+                hayErrores = true;
+            }
+        });
+        
+        const costo = getNumericValue("costo");
+        if (costo <= 0) {
+            nombresFaltantes.push("Costo debe ser mayor a 0");
+            f("costo").classList.add('error-input');
+            hayErrores = true;
+        }
+
+        // ⚡ ¡NUEVA VALIDACIÓN!
+        // Validar el campo de reemplazo SÓLO SI está marcado
+        const reemplazarCheck = f("reemplazar-check").checked;
+        const skuAReemplazarInput = f("sku-a-reemplazar");
+        let oldSkuToReplace = null;
+
+        if (reemplazarCheck) {
+            oldSkuToReplace = skuAReemplazarInput.value.trim();
+            if (!oldSkuToReplace) {
+                nombresFaltantes.push("Sku a Reemplazar (si la casilla está marcada)");
+                skuAReemplazarInput.classList.add('error-input');
+                hayErrores = true;
+            }
+        }
+        // ----------------------------------------------------
+
+        if (!f("proveedor").value) {
+            nombresFaltantes.push("Proveedor (necesario para SKU)");
+            f("proveedor").classList.add('error-input');
+            hayErrores = true;
+        }
+        
+        const modeloValue = f("modelo").value.trim();
+        if (modeloValue && !internalTipo) {
+            nombresFaltantes.push("Categoría/Tipo");
+            if (manualTipoGroup.style.display === 'flex') {
+                manualTipoSelect.classList.add('error-input');
+            } else {
+                 f("modelo-input").classList.add('error-input');
+            }
+            hayErrores = true;
+        }
+        if (internalCostoTotal <= 0) {
+            nombresFaltantes.push("Costo Total (Error de cálculo)");
+            f("costo").classList.add('error-input');
+            hayErrores = true;
+        }
+        if (!imagenArrastrada) {
+            nombresFaltantes.push("Imagen");
+            f("dropzone").classList.add('error-input');
+            hayErrores = true;
+        }
+
+        if(hayErrores){ 
+            const unicos = [...new Set(nombresFaltantes)];
+            mostrarAviso("⚠️ Faltan campos obligatorios o valores inválidos: <br>" + unicos.join(", "), "warning"); 
+            return; 
+        }
+
+        f("btnText").style.display = "none";
+        f("loadingSpinner").style.display = "inline-block";
+        f("guardarBtn").disabled = true;
+
+        try {
+            // Este es el objeto 'd' que coincide con el 'code.gs' que incluye LockService
+            const d = {
+                fecha: f("fecha").value,
+                proveedor: f("proveedor").value,
+                nombre: capitalizeWords(f("nombre").value),
+                marca: f("marca").value,
+                modelo: f("modelo").value,
+                genero: f("genero").value,
+                tipo: internalTipo,
+                costo: getNumericValue("costo"), 
+                precio: getNumericValue("precio"),
+                ganancia: getNumericValue("precio") - internalCostoTotal
+            };
+            
+            // ⚡ ¡CAMBIO! Pasamos 'oldSkuToReplace' como tercer argumento
+            const result = await gsRunAsync("registrarProductoYSubirImagen", d, imagenArrastrada, oldSkuToReplace); 
+
+            navigator.clipboard.writeText(result.nombreImagen);
+            mostrarAviso(`✅ Producto registrado! (SKU: ${result.sku})<br><br>Nombre de imagen: <strong>${result.nombreImagen}</strong><br>Copiado al portapapeles.`, "success");
+            
+            // ... (Resto de la función de limpieza, es idéntica) ...
+            const proveedorVal = f("proveedor").value;
+            const fechaVal = f("fecha").value;
+            ["nombre","genero","costo","precio"].forEach(id=>{
+                f(id).value="";
+            });
+            f("marca-input").value = "";
+            f("marca").value = "";
+            f("modelo-input").value = "";
+            f("modelo").value = "";
+            f("proveedor").value = proveedorVal; 
+            f("fecha").value = fechaVal; 
+            
+            if (proveedorVal) generarSKU(); 
+            
+            setupAutocomplete("marca-input", "marca", "marca-suggestions", allMarcas, onMarcaChange);
+            setupModeloAutocomplete(allModelos);
+            [skuInfo, tipoInfo, gananciaInfo, f("info-modelo-row"), manualTipoGroup].forEach(el => el.style.display = 'none');
+            
+            // ⚡ ¡NUEVO RESET!
+            f("reemplazo-container").style.display = 'none';
+            f("reemplazar-check").checked = false;
+            toggleReemplazoInput(false);
+            // ------------------
+            
+            internalSku = "";
+            internalTipo = "";
+            internalCostoTotal = 0;
+            imagenArrastrada=null;
+            f("preview").style.display="none";
+            f("dropicon").style.display="";
+            f("removeImg").style.display="none";
+            f("dropzone").classList.remove("captured");
+
+        } catch (error) {
+            errorHandler(error);
+        } finally {
+            f("btnText").style.display="inline";
+            f("loadingSpinner").style.display="none";
+            f("guardarBtn").disabled = false;
+        }
+    }
+    function capitalizeWords(str){ 
+        if (!str) return "";
+        return str.replace(/\w\S*/g,w=>w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()); 
+    }
+
+// ========================================================================================
+// VII. FUNCIÓN DE AVISO MODAL
+// (Sección VII sin cambios)
+// ========================================================================================
+    function mostrarAviso(mensaje, tipo = 'warning') {
+        const customAlert = A("customAlert");
+        const alertContent = customAlert.querySelector('.alert-content');
+        const alertIcon = A("alertIcon");
+        A("alertMessage").innerHTML = mensaje.replace(/\n/g, '<br>');
+        alertContent.classList.remove('alert-success', 'alert-error', 'alert-warning');
+        alertContent.classList.add(`alert-${tipo}`);
+        let iconHtml = '';
+        if (tipo === 'success') {
+            iconHtml = '✅';
+        } else if (tipo === 'error') {
+            iconHtml = '❌';
+        } else if (tipo === 'warning') {
+            iconHtml = '⚠️';
+        }
+        alertIcon.textContent = iconHtml;
+        customAlert.style.display = 'flex';
+    }
+    function ocultarAviso() {
+        A("customAlert").style.display = 'none';
+    }
+
+// ========================================================================================
+// VIII. FUNCIÓN PARA ABRIR CARPETA
+// (Sección VIII sin cambios)
+// ========================================================================================
+    function abrirFolder() {
+        const btn = f("abrirFolderBtn");
+        const originalText = "Abrir Folder"; 
+        const modelo = f("modelo").value.trim(); 
+        if (!modelo) {
+            mostrarAviso("⚠️ No se puede buscar. Primero debe seleccionar un Modelo.", "warning");
+            return;
+        }
+        btn.disabled = true;
+        btn.innerHTML = 'Buscando... <span class="spinner"></span>'; 
+        gsRunAsync("getFolderUrl")
+            .then(folderId => {
+                const baseURL = 'https://drive.google.com/drive/u/0/search?q='; 
+                const searchTerm = `"${modelo}" parent:${folderId}`; 
+                const searchUrl = baseURL + encodeURIComponent(searchTerm);
+                window.open(searchUrl, "_blank");
+            })
+            .catch(error => {
+                mostrarAviso("❌ Error: " + error.message, "error");
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.innerHTML = originalText; 
+            });
+    }
+</script>
+</body>
+</html>
