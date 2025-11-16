@@ -1,0 +1,1825 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>
+        /* ======================================================================== */
+        /* --- ESTILOS DE DISEÑO (Optimizado para ancho completo y 50px de alto) --- */
+        /* ======================================================================== */
+
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary: #D61A1A;
+            --primary-hover: #B51212;
+            --secondary: #007BFF;
+            --secondary-hover: #0056B3;
+
+            /* Variables de Modo: Claro (Por Defecto) */
+            --form-bg: #ffffff;
+            /* Fondo del formulario */
+            --main-bg: #f0f0f0;
+            /* Fondo principal (body) */
+            --text: #1f2937;
+            /* Color de texto principal */
+            --muted: #6b7280;
+            /* Color de texto secundario */
+            --border: #d1d5db;
+            /* Color de borde */
+            --input-bg: #f9fafb;
+            /* Fondo de inputs */
+            --divider-light: #f3f4f6;
+            /* Divisor ligero (h2, sugerencias) */
+            --divider-dashed: #e5e7eb;
+            /* Divisor punteado */
+            --success-color: #10B981;
+            /* Verde */
+            --warning-color: #F59E0B;
+            /* Amarillo */
+            --danger: var(--primary);
+            /* Rojo */
+            --gap: 20px;
+        }
+
+        /* Modo Oscuro (se activa con la clase .dark-mode en body) */
+        .dark-mode {
+            --form-bg: #1f2937;
+            --main-bg: #111827;
+            --text: #f9fafb;
+            --muted: #9ca3af;
+            --border: #374151;
+            --input-bg: #374151;
+            --divider-light: #374151;
+            --divider-dashed: #374151;
+        }
+
+        body {
+            font-family: "Poppins", sans-serif;
+            padding: 0;
+            margin: 0;
+            background: var(--main-bg);
+            color: var(--text);
+            font-weight: 400;
+        }
+
+        /* --- LAYOUT Y CONTENEDORES --- */
+        .container {
+            max-width: 600px;
+            margin: var(--gap) auto;
+            background: var(--form-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            padding: var(--gap);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--divider-dashed);
+            padding-bottom: 10px;
+            margin-bottom: var(--gap);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+            color: var(--primary);
+        }
+
+        /* --- PESTAÑAS --- */
+        .tabs {
+            display: flex;
+            margin-bottom: var(--gap);
+            border-bottom: 2px solid var(--border);
+            flex-wrap: wrap; /* Para responsive si hay muchas pestañas */
+        }
+
+        .tab-button {
+            padding: 10px 12px; /* Ligeramente más pequeño para 6 pestañas */
+            cursor: pointer;
+            border: none;
+            background: none;
+            color: var(--muted);
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            font-size: 0.85rem; /* Reducido para 6 pestañas */
+        }
+
+        .tab-button.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            background-color: var(--divider-light);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* --- GRUPOS DE FORMULARIO Y CAMPOS --- */
+        .form-section {
+            padding-bottom: var(--gap);
+            margin-bottom: var(--gap);
+            border-bottom: 1px dashed var(--divider-dashed);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group.grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.85rem;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .input-text,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            background-color: var(--input-bg);
+            color: var(--text);
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        .input-text:focus,
+        select:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+        
+        /* Asegurar que el input de fecha se vea bien */
+        input[type="date"].input-text {
+            appearance: none;
+            -webkit-appearance: none;
+        }
+        /* Placeholder para input de fecha si no está soportado */
+        input[type="date"]:invalid::-webkit-datetime-edit {
+            color: var(--muted);
+        }
+
+
+        /* --- TABLAS --- */
+        #productosTable, #edicionTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.8rem;
+        }
+
+        #productosTable th,
+        #productosTable td,
+        #edicionTable th,
+        #edicionTable td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--divider-light);
+            vertical-align: middle;
+        }
+
+        #productosTable th,
+        #edicionTable th {
+            background-color: var(--divider-light);
+            font-weight: 600;
+            color: var(--muted);
+        }
+
+        #productosTable tbody tr:hover,
+        #edicionTable tbody tr:hover {
+            background-color: var(--divider-light);
+        }
+
+        /* Campos de input en la tabla de edición */
+        #edicionTable input[type="text"],
+        #edicionTable input[type="number"],
+        #edicionTable select {
+            padding: 5px;
+            font-size: 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            background-color: var(--input-bg);
+            width: 100%; /* Para que ocupen el espacio de la celda */
+            box-sizing: border-box;
+        }
+        
+        #edicionTable .read-only {
+            background-color: var(--divider-light);
+            cursor: not-allowed;
+            font-size: 0.75rem; /* Más pequeño para IDs largos */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Botón de eliminar fila en tabla */
+        .remove-product-btn {
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 0;
+        }
+
+        /* --- BOTONES --- */
+        .btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s, opacity 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background-color: var(--secondary-hover);
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .btn-success:hover:not(:disabled) {
+            background-color: #0b9e69;
+        }
+
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* --- UTILIDADES --- */
+        .text-center {
+            text-align: center;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid var(--form-bg);
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            animation: spin 1s linear infinite;
+            display: none;
+            margin-left: 5px;
+        }
+        
+        .spinner-dark {
+            border-top: 4px solid var(--text);
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .total-summary {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: var(--divider-light);
+            border-radius: 4px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.0rem;
+        }
+
+        /* --- Aviso Modal Personalizado --- */
+        #customAlert {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            /* Oculto por defecto */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .alert-content {
+            background: var(--form-bg);
+            padding: 25px 30px;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .alert-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .alert-message {
+            margin-bottom: 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .alert-content.alert-success {
+            border-top: 5px solid var(--success-color);
+        }
+
+        .alert-content.alert-error {
+            border-top: 5px solid var(--danger);
+        }
+
+        .alert-content.alert-warning {
+            border-top: 5px solid var(--warning-color);
+        }
+
+        /* --- Botón de Modo Oscuro --- */
+        .mode-toggle-btn {
+            background: var(--divider-light);
+            color: var(--text);
+            border: 1px solid var(--border);
+            font-size: 1.2rem;
+            line-height: 1;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mode-toggle-btn:hover {
+            background: var(--border);
+        }
+    </style>
+</head>
+
+<body onload="cargarListas();">
+
+    <div id="customAlert">
+        <div class="alert-content">
+            <span id="alertIcon" class="alert-icon"></span>
+            <p id="alertMessage" class="alert-message"></p>
+            <button class="btn btn-secondary" onclick="ocultarAviso()">Aceptar</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>Sistema de Registro de Finanzas</h1>
+            <button id="modeToggleBtn" class="mode-toggle-btn" onclick="toggleDarkMode()">💡</button>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab(event, 'registro')">Registro de Pedido</button>
+            <button class="tab-button" onclick="openTab(event, 'rechazo')">Rechazo/Devolución</button>
+            <button class="tab-button" onclick="openTab(event, 'ventaDevolucion')">Venta Devolución</button>
+            <button class="tab-button" onclick="openTab(event, 'edicion')">Edición de Pedido</button>
+            <button class="tab-button" onclick="openTab(event, 'envio')">Registro Guía</button>
+            <button class="tab-button" onclick="openTab(event, 'correccion')">Corregir Rechazo</button>
+        </div>
+        
+        <datalist id="listaInventarioDevolucion"></datalist>
+
+
+        <div id="registro" class="tab-content active">
+            <form id="registroForm">
+                <div class="form-section">
+                    <h2>Datos del Cliente</h2>
+                    <div class="form-group grid">
+                        <div>
+                            <label for="cliente">Cliente:</label>
+                            <input type="text" id="cliente" name="cliente" class="input-text" required>
+                        </div>
+                        <div>
+                            <label for="contacto">Contacto (Tel/WA):</label>
+                            <input type="text" id="contacto" name="contacto" class="input-text" required>
+                        </div>
+                    </div>
+                    <div class="form-group grid">
+                        <div>
+                            <label for="ciudadCliente">Ciudad Cliente:</label>
+                            <input type="text" id="ciudadCliente" name="ciudadCliente" class="input-text">
+                        </div>
+                        <div>
+                            <label for="ciudadEntrega">Ciudad de Entrega:</label>
+                            <input type="text" id="ciudadEntrega" name="ciudadEntrega" list="listaCiudades"
+                                class="input-text" required onchange="calcularPrecioTotal()">
+                            <datalist id="listaCiudades"></datalist>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Detalles del Producto</h2>
+                    <div class="form-group grid">
+                        <div>
+                            <label for="sku">ID Producto:</label>
+                            <input type="text" id="sku" name="sku" list="listaSkus" class="input-text"
+                                onchange="seleccionarSku()">
+                            <datalist id="listaSkus"></datalist>
+                        </div>
+                        <div>
+                            <label for="talla">Talla:</label>
+                            <input type="text" id="talla" name="talla" class="input-text">
+                        </div>
+                    </div>
+                    <div class="form-group grid">
+                        <div>
+                            <label for="cantidad">Cantidad:</label>
+                            <input type="number" id="cantidad" name="cantidad" class="input-text" min="1" value="1"
+                                onchange="calcularPrecioTotal()">
+                        </div>
+                        <div>
+                            <label for="precioUnitario">Precio Unitario:</label>
+                            <input type="number" id="precioUnitario" name="precioUnitario" class="input-text" step="0.01"
+                                min="0" onchange="calcularPrecioTotal()">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-secondary" onclick="agregarProducto()">+ Agregar
+                            Producto</button>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Resumen del Pedido</h2>
+                    <div class="form-group">
+                        <table id="productosTable">
+                            <thead>
+                                <tr>
+                                    <th>SKU</th>
+                                    <th>Marca-Modelo</th>
+                                    <th>Cant.</th>
+                                    <th>Precio/U</th>
+                                    <th>Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="productosTableBody">
+                                </tbody>
+                        </table>
+                    </div>
+                    <div class="total-summary">
+                        <span>Costo de Envío:</span>
+                        <span id="costoEnvioDisplay">$0.00</span>
+                    </div>
+                    <div class="total-summary">
+                        <span>TOTAL Pedido:</span>
+                        <span id="totalPedidoDisplay">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="button" id="guardarPedidoBtn" class="btn btn-primary" onclick="guardarPedido()">
+                        <span id="btnText">Registrar Pedido</span>
+                        <div id="loadingSpinner" class="spinner"></div>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="rechazo" class="tab-content">
+            <form id="rechazoForm">
+                <div class="form-section">
+                    <h2>Registro de Producto Rechazado</h2>
+                    <div class="form-group">
+                        <label for="idProductoRechazo">ID Producto Único (Columna C):</label>
+                        <input type="text" id="idProductoRechazo" name="idProductoRechazo"
+                            list="listaProductosUnicosRechazo" class="input-text"
+                            onchange="checkRechazoAvailability()">
+                        <datalist id="listaProductosUnicosRechazo"></datalist>
+                    </div>
+
+                    <div id="rechazoInfo" style="margin-bottom: 15px; font-size: 0.85rem; color: var(--muted);">
+                        </div>
+
+                    <div class="form-group">
+                        <label for="cantidadRechazo">Cantidad a Rechazar:</label>
+                        <input type="number" id="cantidadRechazo" name="cantidadRechazo" class="input-text" min="1"
+                            value="1">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="button" id="registrarRechazoBtn" class="btn btn-primary"
+                        onclick="registrarRechazo()" disabled>
+                        <span id="btnRechazoText">Registrar Rechazo</span>
+                        <div id="loadingRechazoSpinner" class="spinner"></div>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="ventaDevolucion" class="tab-content">
+            <form id="ventaDevolucionForm">
+                <div class="form-section">
+                    <h2>Datos del Comprador</h2>
+                    
+                    <div class="form-group grid">
+                        <div>
+                            <label for="clienteVenta">Cliente:</label>
+                            <input type="text" id="clienteVenta" name="clienteVenta" class="input-text" required>
+                            
+                            <div style="margin-top: 10px; display: flex; align-items: center;">
+                                <input type="checkbox" id="consumoInterno" onchange="toggleConsumoInterno()" style="width: auto;">
+                                <label for="consumoInterno" style="margin-bottom: 0; margin-left: 8px; font-weight: 400;">Es Consumo Interno</label>
+                            </div>
+                            
+                        </div>
+                        <div>
+                            <label for="contactoVenta">Contacto (Tel/WA):</label>
+                            <input type="text" id="contactoVenta" name="contactoVenta" class="input-text" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="direccionEntrega">Dirección de Entrega:</label>
+                        <input type="text" id="direccionEntrega" name="direccionEntrega" class="input-text">
+                    </div>
+                    <div class="form-group">
+                        <label for="ciudadEntregaVenta">Ciudad de Entrega:</label>
+                        <input type="text" id="ciudadEntregaVenta" name="ciudadEntregaVenta" class="input-text" required>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Producto de Devolución</h2>
+                    <div class="form-group">
+                        <label for="idProductoVenta">ID Producto Único (Devolución):</label>
+                        <input type="text" id="idProductoVenta" name="idProductoVenta"
+                            list="listaInventarioDevolucion" class="input-text"
+                            onchange="checkVentaDevolucionAvailability()">
+                    </div>
+
+                    <div id="ventaInfo" style="margin-bottom: 15px; font-size: 0.85rem; color: var(--muted);">
+                        </div>
+
+                    <div class="form-group grid">
+                        <div>
+                            <label for="cantidadVenta">Cantidad a Vender:</label>
+                            <input type="number" id="cantidadVenta" name="cantidadVenta" class="input-text" min="1"
+                                value="1" required>
+                        </div>
+                        <div>
+                            <label for="precioUnitarioDevolucion">Precio Unitario Venta:</label>
+                            <input type="number" id="precioUnitarioDevolucion" name="precioUnitarioDevolucion"
+                                class="input-text" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="button" id="registrarVentaDevolucionBtn" class="btn btn-primary"
+                        onclick="registrarVentaDevolucion()" disabled>
+                        <span id="btnVentaDevolucionText">Registrar Venta</span>
+                        <div id="loadingVentaDevolucionSpinner" class="spinner"></div>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div id="edicion" class="tab-content">
+            <form id="edicionForm">
+                <div class="form-section">
+                    <h2>Buscar Pedido a Editar</h2>
+                    <div class="form-group">
+                        <label for="idPedidoEdicion">Buscar ID Pedido a Editar:</label>
+                        <input type="text" id="idPedidoEdicion" name="idPedidoEdicion" list="listaPedidos"
+                            class="input-text" placeholder="Escriba o seleccione un ID de Pedido (YYMMDD-X-000)">
+
+                        <datalist id="listaPedidos"></datalist>
+                    </div>
+                    <button type="button" id="buscarPedidoBtn" onclick="buscarPedidoParaEdicion()"
+                        class="btn btn-secondary">
+                        <span id="btnBuscarText">Buscar Pedido</span>
+                        <div id="loadingBuscarSpinner" class="spinner spinner-dark"></div>
+                    </button>
+                </div>
+
+                <div class="form-section" id="edicionResultados" style="display: none;">
+                    <h2>Líneas del Pedido: <span id="idPedidoDisplay"></span></h2>
+                    
+                    <div class="form-group" style="overflow-x: auto;">
+                        <table id="edicionTable">
+                            <thead>
+                                <tr>
+                                    <th title="ID Pedido - SKU - Cód. Aleatorio - Cant.">ID Producto Único</th>
+                                    <th>ID Producto (SKU)</th>
+                                    <th>Estado</th>
+                                    <th>Cant.</th>
+                                    <th>Precio/U</th>
+                                    <th>Talla</th>
+                                    <th>Ciudad</th>
+                                    <th>Cant. Rechazada</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="edicionTableBody">
+                                </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="total-summary" id="edicionTotalSummary">
+                        <span>TOTAL Pedido:</span>
+                        <span id="edicionTotalDisplay">$0.00</span>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 20px;">
+                        <button type="button" id="guardarEdicionBtn" onclick="guardarEdicion()"
+                            class="btn btn-success">
+                            <span id="btnGuardarEdicionText">Guardar Cambios</span>
+                            <div id="loadingGuardarSpinner" class="spinner"></div>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div id="envio" class="tab-content">
+            <form id="envioForm">
+                <div class="form-section">
+                    <h2>Registrar Guía de Envío</h2>
+                    <p style="font-size: 0.85rem; color: var(--muted); margin-top: -10px; margin-bottom: 20px;">
+                        Esto asignará la guía y la fecha a TODAS las líneas de un mismo ID Pedido (Columnas Q y R).
+                    </p>
+
+                    <div class="form-group">
+                        <label for="idPedidoEnvio">ID Pedido (Columna B):</label>
+                        <input type="text" id="idPedidoEnvio" name="idPedidoEnvio" list="listaPedidos"
+                            class="input-text" required
+                            placeholder="Seleccione o escriba el ID Pedido a despachar">
+                        </div>
+
+                    <div class="form-group">
+                        <label for="numeroGuia">Número de Guía (Envío):</label>
+                        <input type="text" id="numeroGuia" name="numeroGuia" class="input-text" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fechaEnvio">Fecha de Envío:</label>
+                        <input type="date" id="fechaEnvio" name="fechaEnvio" class="input-text" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="button" id="registrarGuiaBtn" class="btn btn-primary"
+                        onclick="registrarGuia()">
+                        <span id="btnGuiaText">Registrar Guía</span>
+                        <div id="loadingGuiaSpinner" class="spinner"></div>
+                    </button>
+                </div>
+            </form>
+        </div>
+        <div id="correccion" class="tab-content">
+            <form id="correccionForm">
+                <div class="form-section">
+                    <h2>Corregir Rechazo</h2>
+                    <p style="font-size: 0.85rem; color: var(--muted); margin-top: -10px; margin-bottom: 20px;">
+                        Use esto si registró un rechazo por error. Esto devolverá la cantidad al pedido original.
+                    </p>
+                    <div class="form-group">
+                        <label for="idProductoCorreccion">ID Producto Único (del Inventario Devolución):</label>
+                        <input type="text" id="idProductoCorreccion" name="idProductoCorreccion"
+                            list="listaInventarioDevolucion" class="input-text"
+                            onchange="checkCorreccionAvailability()">
+                    </div>
+
+                    <div id="correccionInfo" style="margin-bottom: 15px; font-size: 0.85rem; color: var(--muted);">
+                        </div>
+
+                    <div class="form-group">
+                        <label for="cantidadCorreccion">Cantidad a Corregir (Devolver al pedido):</label>
+                        <input type="number" id="cantidadCorreccion" name="cantidadCorreccion" class="input-text" min="1"
+                            value="1">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button type="button" id="registrarCorreccionBtn" class="btn btn-primary"
+                        onclick="registrarCorreccion()" disabled>
+                        <span id="btnCorreccionText">Registrar Corrección</span>
+                        <div id="loadingCorreccionSpinner" class="spinner"></div>
+                    </button>
+                </div>
+            </form>
+        </div>
+        </div>
+
+    <script>
+        // Alias para document.getElementById
+        const f = (id) => document.getElementById(id);
+        const A = (id) => document.getElementById(id); // Alias para el Aviso
+
+        // Variables de estado global
+        let skusDisponibles = [];
+        let tarifasCiudades = {};
+        let listaProductosPedido = []; // Para la pestaña de registro
+        let lineasDePedidoParaEdicion = []; // Para la pestaña de edición
+        let randomCodeMap = {}; // CRÍTICO: Para guardar el código aleatorio de cada línea de pedido
+
+        // --- Manejo de Pestañas ---
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab-button");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            f(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        // Abrir la primera pestaña por defecto al cargar
+        document.addEventListener("DOMContentLoaded", () => {
+            f('registro').style.display = 'block';
+            
+            // Cargar la preferencia de modo oscuro
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                if (f("modeToggleBtn")) f("modeToggleBtn").textContent = '🌙';
+            } else {
+                 if (f("modeToggleBtn")) f("modeToggleBtn").textContent = '💡';
+            }
+        });
+
+
+        // --- Funciones de Utilidad ---
+        function errorHandler(error) {
+            console.error("Error del Servidor:", error);
+            const message = error.message ? error.message : String(error);
+            mostrarAviso("Ocurrió un error en el servidor. Revise la consola o intente de nuevo.\nDetalle: " + message, 'error');
+            
+            // Ocultar spinners/botones de carga en todas las pestañas
+            f('loadingSpinner').style.display = 'none';
+            f('btnText').style.display = 'inline';
+            f('guardarPedidoBtn').disabled = false;
+            
+            f('loadingBuscarSpinner').style.display = 'none';
+            f('btnBuscarText').style.display = 'inline';
+            f('buscarPedidoBtn').disabled = false;
+
+            f('loadingGuardarSpinner').style.display = 'none';
+            f('btnGuardarEdicionText').style.display = 'inline';
+            f('guardarEdicionBtn').disabled = false;
+            
+            f('loadingGuiaSpinner').style.display = 'none';
+            f('btnGuiaText').style.display = 'inline';
+            f('registrarGuiaBtn').disabled = false;
+
+            f('loadingCorreccionSpinner').style.display = 'none';
+            f('btnCorreccionText').style.display = 'inline';
+            f('registrarCorreccionBtn').disabled = false;
+        }
+
+        // --- Carga de Datos Inicial ---
+        function cargarListas() {
+            // Cargar SKUs y Tarifas
+            google.script.run
+                .withSuccessHandler(llenarListaSkus)
+                .withFailureHandler(errorHandler)
+                .getSkusDisponibles();
+
+            google.script.run
+                .withSuccessHandler(llenarListaCiudades)
+                .withFailureHandler(errorHandler)
+                .getTarifasCiudades();
+
+            // Cargar IDs Únicos para Rechazo (Pestaña 2)
+            google.script.run
+                .withSuccessHandler(llenarListaProductosRechazo)
+                .withFailureHandler(errorHandler)
+                .getProductosRechazoDisponibles();
+
+            // Cargar IDs de Pedido para Edición (Pestaña 4 y 5)
+            google.script.run
+                .withSuccessHandler(llenarListaPedidosEdicion)
+                .withFailureHandler(errorHandler)
+                .getIdsPedidosDisponibles();
+            
+            // Cargar IDs del Inventario (Pestaña 3 y 6)
+            google.script.run
+                .withSuccessHandler(llenarListaInventario)
+                .withFailureHandler(errorHandler)
+                .getIdsInventarioDisponibles();
+        }
+
+        function llenarListaSkus(productos) {
+            if (typeof productos === 'string' && productos.startsWith('ERROR')) {
+                errorHandler({ message: productos });
+                return;
+            }
+            skusDisponibles = productos;
+            const datalist = f('listaSkus');
+            datalist.innerHTML = '';
+            productos.forEach(p => {
+                const option = document.createElement('option');
+                option.value = p.etiqueta; // Mostrar etiqueta completa
+                datalist.appendChild(option);
+            });
+        }
+
+        function llenarListaCiudades(tarifas) {
+            if (typeof tarifas === 'string' && tarifas.startsWith('ERROR')) {
+                errorHandler({ message: tarifas });
+                return;
+            }
+            tarifasCiudades = {};
+            const datalist = f('listaCiudades');
+            datalist.innerHTML = '';
+            tarifas.forEach(t => {
+                tarifasCiudades[t.ciudad.toUpperCase()] = t.tarifa;
+                const option = document.createElement('option');
+                option.value = t.ciudad;
+                datalist.appendChild(option);
+            });
+            calcularPrecioTotal(); // Recalcula si el campo de ciudad ya estaba lleno
+        }
+
+        // Esta lista es solo para la Pestaña 2 (Rechazo)
+        function llenarListaProductosRechazo(ids) {
+            if (typeof ids === 'string' && ids.startsWith('ERROR')) {
+                errorHandler({ message: ids });
+                return;
+            }
+            const datalist = f('listaProductosUnicosRechazo');
+            datalist.innerHTML = '';
+            ids.forEach(id => {
+                const option = document.createElement('option');
+                option.value = id;
+                datalist.appendChild(option);
+            });
+        }
+        
+        // Esta lista es para Pestaña 4 (Edición) y 5 (Guía)
+        function llenarListaPedidosEdicion(ids) {
+            if (Array.isArray(ids) && ids.length > 0) {
+                const datalist = f('listaPedidos');
+                datalist.innerHTML = ''; 
+                
+                ids.forEach(id => {
+                    const option = document.createElement('option');
+                    option.value = id;
+                    datalist.appendChild(option);
+                });
+            } else if (ids.error) {
+                errorHandler(ids.error);
+            }
+        }
+
+        // Esta lista es para Pestaña 3 (Venta) y 6 (Corrección)
+        function llenarListaInventario(ids) {
+             if (typeof ids === 'string' && ids.startsWith('ERROR')) {
+                errorHandler({ message: ids });
+                return;
+            }
+            const datalist = f('listaInventarioDevolucion');
+            datalist.innerHTML = '';
+            ids.forEach(id => {
+                const option = document.createElement('option');
+                option.value = id;
+                datalist.appendChild(option);
+            });
+        }
+        
+        // --- FUNCIÓN DE EDICIÓN: Búsqueda del Pedido ---
+        function buscarPedidoParaEdicion() {
+            const idPedido = f('idPedidoEdicion').value.trim();
+            if (!idPedido) {
+                mostrarAviso("Ingrese o seleccione un ID de Pedido válido.", 'warning');
+                return;
+            }
+
+            f('loadingBuscarSpinner').style.display = 'inline';
+            f('btnBuscarText').style.display = 'none';
+            f('buscarPedidoBtn').disabled = true;
+
+            google.script.run
+                .withSuccessHandler(mostrarPedidoEnEdicion)
+                .withFailureHandler(errorHandler)
+                .getPedidoParaEdicion(idPedido);
+        }
+
+        // --- FUNCIONES NUEVAS: Lógica de Regeneración de ID Único ---
+        
+        /**
+         * Genera un código alfanumérico aleatorio. (Copiado del backend)
+         */
+        function generarCodigoAleatorio(length) {
+          var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+          var result = '';
+          for (var i = 0; i < length; i++) {
+            result += characters.charAt(Math.floor(Math.random() * characters.length));
+          }
+          return result;
+        }
+
+        /**
+         * Intenta extraer el código alfanumérico (ej: ABCD) de un ID Producto Único.
+         */
+        function extractRandomCode(idUnico) {
+            // Formato esperado: YYMMDD-X-001-SKU-ABCD-9
+            const partes = idUnico.split('-');
+            
+            if (partes.length === 6) {
+                return partes[4]; // El código aleatorio es la 5ª parte (índice 4)
+            }
+            // Fallback: Si el formato es inesperado, generamos uno nuevo
+            return generarCodigoAleatorio(4); 
+        }
+
+        /**
+         * Reconstruye el ID Producto Único (Columna C) con los nuevos datos.
+         */
+        function regenerarIdProductoUnico(index, nuevoSku, nuevaCantidad, originalIdUnico) {
+            const linea = lineasDePedidoParaEdicion[index];
+            const idPedidoBase = linea['ID Pedido']; // YYMMDD-X-001 (Col B)
+            
+            // 1. Obtener el código aleatorio, manteniéndolo constante si es posible.
+            let randomCode;
+            const mapKey = linea.rowIndex; // Usar la fila de la hoja como clave única
+            
+            if (randomCodeMap[mapKey]) {
+                randomCode = randomCodeMap[mapKey];
+            } else {
+                randomCode = extractRandomCode(originalIdUnico); 
+                randomCodeMap[mapKey] = randomCode; 
+            }
+            
+            // Construcción: ID Pedido (YYMMDD-X-001) - SKU - RANDOM - CANTIDAD
+            return `${idPedidoBase}-${nuevoSku}-${randomCode}-${nuevaCantidad}`;
+        }
+        
+        /**
+         * Maneja el cambio del campo SKU (ID_PRODUCTO).
+         */
+        function handleSkuChange(input) {
+            const index = parseInt(input.dataset.index);
+            const nuevoSkuEtiqueta = input.value.trim();
+            const fila = input.closest('tr');
+            
+            // 1. Buscar el producto seleccionado
+            const productoSeleccionado = skusDisponibles.find(p => p.etiqueta === nuevoSkuEtiqueta);
+            
+            let nuevoSkuCorto = '';
+            let nuevaMarcaModelo = '';
+            let nuevoProveedor = '';
+            let nuevoPrecioUnitario = 0;
+
+            if (productoSeleccionado) {
+                nuevoSkuCorto = productoSeleccionado.sku;
+                nuevaMarcaModelo = `${productoSeleccionado.marca} - ${productoSeleccionado.modelo}`;
+                nuevoProveedor = productoSeleccionado.proveedor;
+                nuevoPrecioUnitario = productoSeleccionado.precio;
+
+                // Actualizar el input de Precio Unitario en el DOM con el precio sugerido
+                const precioInput = fila.querySelector('input[name="Precio Unitario"]');
+                if (precioInput) {
+                    precioInput.value = nuevoPrecioUnitario.toFixed(2);
+                }
+            } else {
+                 // Si no se encuentra, asumimos que el usuario pudo haber escrito el SKU corto directamente
+                 nuevoSkuCorto = nuevoSkuEtiqueta.split('-')[0].trim().toUpperCase();
+                 // Los campos de Marca-Modelo y Proveedor se vacían si no se encuentra en la lista de SKUs
+                 nuevaMarcaModelo = '';
+                 nuevoProveedor = '';
+                 
+                 // El precio unitario se mantiene con el valor que tenía antes si no hay producto sugerido
+                 nuevoPrecioUnitario = parseFloat(fila.querySelector('input[name="Precio Unitario"]').value) || 0;
+            }
+            
+            // 2. Obtener Cantidad actual para regenerar el ID Único
+            const cantidadInput = fila.querySelector('input[name="Cantidad"]');
+            const nuevaCantidad = parseInt(cantidadInput.value) || 0;
+            
+            // 3. Actualizar la data en el array global (CRÍTICO)
+            const originalIdUnico = lineasDePedidoParaEdicion[index]['ID Producto Único']; // ID Único ANTERIOR
+            
+            lineasDePedidoParaEdicion[index]['ID_PRODUCTO'] = nuevoSkuCorto;
+            lineasDePedidoParaEdicion[index]['Marca-Modelo'] = nuevaMarcaModelo;
+            lineasDePedidoParaEdicion[index]['Proveedor'] = nuevoProveedor;
+            lineasDePedidoParaEdicion[index]['Precio Unitario'] = nuevoPrecioUnitario; // Actualiza el valor en el array
+            lineasDePedidoParaEdicion[index]['Cantidad'] = nuevaCantidad; // Aseguramos que la cantidad esté actualizada en la línea
+            
+            // 4. Regenerar el ID Producto Único
+            const nuevoIdUnico = regenerarIdProductoUnico(index, nuevoSkuCorto, nuevaCantidad, originalIdUnico);
+            lineasDePedidoParaEdicion[index]['ID Producto Único'] = nuevoIdUnico;
+            
+            // 5. Actualizar display del ID Producto Único (la primera celda)
+            const idUnicoCell = fila.cells[0];
+            idUnicoCell.textContent = nuevoIdUnico;
+            
+            // 6. Recalcular totales
+            actualizarLineaData(cantidadInput); // Llama a la función principal para recalcular totales y el resto
+        }
+
+        // --- FUNCIÓN DE EDICIÓN: Mostrar el Pedido en la Tabla ---
+        function mostrarPedidoEnEdicion(pedidos) {
+            f('loadingBuscarSpinner').style.display = 'none';
+            f('btnBuscarText').style.display = 'inline';
+            f('buscarPedidoBtn').disabled = false;
+            
+            const resultadosDiv = f('edicionResultados');
+            const tbody = f('edicionTableBody');
+            tbody.innerHTML = '';
+            lineasDePedidoParaEdicion = []; // Limpiar data global
+            randomCodeMap = {}; // CRÍTICO: Limpiar el mapa de códigos aleatorios
+            
+            if (pedidos === null || pedidos.error) {
+                resultadosDiv.style.display = 'none';
+                mostrarAviso(pedidos ? pedidos.error : `El ID de Pedido **${f('idPedidoEdicion').value.trim()}** no fue encontrado.`, 'warning');
+                return;
+            }
+
+            // Establecer el ID del pedido y mostrar la sección
+            f('idPedidoDisplay').textContent = pedidos[0]['ID Pedido'];
+            resultadosDiv.style.display = 'block';
+            let totalGeneral = 0;
+
+            pedidos.forEach((linea, index) => {
+                // CRÍTICO: Inicializar el mapa de códigos aleatorios
+                const originalIdUnico = linea['ID Producto Único'];
+                const randomCode = extractRandomCode(originalIdUnico);
+                randomCodeMap[linea.rowIndex] = randomCode; // Usar el índice de la hoja como clave
+
+                // Guardar la data original (incluyendo rowIndex) para el guardado
+                lineasDePedidoParaEdicion.push(linea);
+
+                const fila = tbody.insertRow();
+                fila.dataset.index = index; // Usaremos el índice del array global
+
+                const currentTotal = parseFloat(linea['Precio Total']) || 0;
+                totalGeneral += currentTotal;
+                
+                // 0. ID Producto Único (Col C) - NO editable, solo display
+                const idUnicoCell = fila.insertCell(0);
+                idUnicoCell.textContent = originalIdUnico;
+                idUnicoCell.classList.add('read-only');
+
+                // 1. ID Producto (SKU) (Col E) - Editable con DATALIST
+                const skuCell = fila.insertCell(1);
+                skuCell.innerHTML = `<input type="text" name="ID_PRODUCTO" class="input-text" data-index="${index}" value="${linea['ID_PRODUCTO'] || ''}" list="listaSkus" onchange="handleSkuChange(this)">`;
+                
+                // 2. Estado (Col O) - Editable con SELECT
+                const estadoCell = fila.insertCell(2);
+                const selectEstado = document.createElement('select');
+                selectEstado.name = 'Estado';
+                selectEstado.className = 'input-text';
+                selectEstado.onchange = actualizarLineaData;
+                selectEstado.dataset.index = index;
+                
+                ['Pendiente', 'En Despacho', 'Enviado', 'Entregado', 'Rechazado', 'Cancelado'].forEach(estado => {
+                    const option = document.createElement('option');
+                    option.value = estado;
+                    option.textContent = estado;
+                    if (estado === linea['Estado']) {
+                        option.selected = true;
+                    }
+                    selectEstado.appendChild(option);
+                });
+                estadoCell.appendChild(selectEstado);
+
+                // 3. Cantidad (Col L) - Editable (Number)
+                const cantidadCell = fila.insertCell(3);
+                cantidadCell.innerHTML = `<input type="number" name="Cantidad" class="input-text" data-index="${index}" value="${linea['Cantidad']}" min="0" onchange="actualizarLineaData(this)">`;
+                
+                // 4. Precio Unitario (Col M) - Editable (Number)
+                const precioUnitarioCell = fila.insertCell(4);
+                precioUnitarioCell.innerHTML = `<input type="number" name="Precio Unitario" class="input-text" data-index="${index}" value="${(parseFloat(linea['Precio Unitario']) || 0).toFixed(2)}" min="0" step="0.01" onchange="actualizarLineaData(this)">`;
+
+                // 5. Talla (Col I) - Editable (Text)
+                const tallaCell = fila.insertCell(5);
+                tallaCell.innerHTML = `<input type="text" name="Talla" class="input-text" data-index="${index}" value="${linea['Talla'] || ''}" onchange="actualizarLineaData(this)">`;
+
+                // 6. Ciudad Entrega (Col H) - Editable (Text)
+                const ciudadCell = fila.insertCell(6);
+                ciudadCell.innerHTML = `<input type="text" name="Ciudad Entrega" class="input-text" data-index="${index}" value="${linea['Ciudad Entrega'] || ''}" onchange="actualizarLineaData(this)">`;
+                
+                // 7. Cantidad Rechazada (Col P) - Editable (Number)
+                const cantRechazadaCell = fila.insertCell(7);
+                cantRechazadaCell.innerHTML = `<input type="number" name="Cantidad Rechazada" class="input-text" data-index="${index}" value="${linea['Cantidad Rechazada'] || 0}" min="0" onchange="actualizarLineaData(this)">`;
+
+
+                // 8. Precio Total (Col N) - NO editable, solo display
+                const totalCell = fila.insertCell(8);
+                totalCell.textContent = `$${currentTotal.toFixed(2)}`;
+                totalCell.classList.add('total-linea');
+            });
+            
+            calcularTotalGeneralEdicion();
+            
+            mostrarAviso(`Pedido ${pedidos[0]['ID Pedido']} encontrado con ${pedidos.length} línea(s).`, 'success');
+        }
+
+        // --- FUNCIÓN DE EDICIÓN: Actualizar Data en JS y Totales ---
+        function actualizarLineaData(changedInput = null) {
+            let totalGeneral = 0;
+            const filas = f('edicionTableBody').querySelectorAll('tr');
+
+            filas.forEach((fila) => {
+                const index = parseInt(fila.dataset.index);
+                const inputs = fila.querySelectorAll('input, select');
+                
+                let cantidad = 0;
+                let precioUnitario = 0;
+                
+                const originalIdUnico = lineasDePedidoParaEdicion[index]['ID Producto Único'];
+
+                inputs.forEach(input => {
+                    const name = input.name;
+                    let value = input.value;
+                    
+                    if (name === 'Cantidad') {
+                        cantidad = parseFloat(value) || 0;
+                        lineasDePedidoParaEdicion[index][name] = cantidad;
+                    } else if (name === 'Precio Unitario') {
+                        precioUnitario = parseFloat(value) || 0;
+                        lineasDePedidoParaEdicion[index][name] = precioUnitario;
+                    } else if (name === 'ID_PRODUCTO') {
+                        lineasDePedidoParaEdicion[index][name] = value.split('-')[0].trim().toUpperCase(); // Guardar solo el SKU corto
+                    } else {
+                        // Para Estado, Talla, Ciudad Entrega, Cantidad Rechazada
+                        lineasDePedidoParaEdicion[index][name] = value;
+                    }
+                });
+                
+                // Lógica de Regeneración CRÍTICA: Si la Cantidad cambió, regeneramos el ID Producto Único
+                if (changedInput && changedInput.name === 'Cantidad') {
+                    const nuevoSkuCorto = lineasDePedidoParaEdicion[index]['ID_PRODUCTO'];
+                    
+                    const nuevoIdUnico = regenerarIdProductoUnico(index, nuevoSkuCorto, cantidad, originalIdUnico);
+                    lineasDePedidoParaEdicion[index]['ID Producto Único'] = nuevoIdUnico;
+                    
+                    // Actualizar display del ID Producto Único
+                    const idUnicoCell = fila.cells[0];
+                    idUnicoCell.textContent = nuevoIdUnico;
+                }
+                
+                // Recalcular Total de la Línea
+                const precioTotalLinea = cantidad * precioUnitario;
+                lineasDePedidoParaEdicion[index]['Precio Total'] = precioTotalLinea;
+                
+                // Actualizar el display del total de la línea
+                const totalCell = fila.querySelector('.total-linea');
+                if (totalCell) {
+                    totalCell.textContent = `$${precioTotalLinea.toFixed(2)}`;
+                }
+
+                totalGeneral += precioTotalLinea;
+            });
+            
+            calcularTotalGeneralEdicion();
+        }
+        
+        function calcularTotalGeneralEdicion() {
+            let totalGeneral = 0;
+            lineasDePedidoParaEdicion.forEach(linea => {
+                totalGeneral += parseFloat(linea['Precio Total']) || 0;
+            });
+            
+            f('edicionTotalDisplay').textContent = `$${totalGeneral.toFixed(2)}`;
+        }
+
+        // --- FUNCIÓN DE EDICIÓN: Guardar Cambios ---
+        function guardarEdicion() {
+            if (lineasDePedidoParaEdicion.length === 0) {
+                mostrarAviso("No hay líneas de pedido cargadas para guardar.", 'warning');
+                return;
+            }
+            
+            actualizarLineaData(); 
+
+            f('loadingGuardarSpinner').style.display = 'inline';
+            f('btnGuardarEdicionText').style.display = 'none';
+            f('guardarEdicionBtn').disabled = true;
+
+            google.script.run
+                .withSuccessHandler(guardadoEdicionExitoso)
+                .withFailureHandler(errorHandler)
+                .actualizarPedido(lineasDePedidoParaEdicion);
+        }
+
+        function guardadoEdicionExitoso(response) {
+            f('loadingGuardarSpinner').style.display = 'none';
+            f('btnGuardarEdicionText').style.display = 'inline';
+            f('guardarEdicionBtn').disabled = false;
+            
+            if (response.success) {
+                mostrarAviso(response.message, 'success');
+                f('edicionForm').reset();
+                f('edicionResultados').style.display = 'none';
+                lineasDePedidoParaEdicion = [];
+            } else {
+                errorHandler({ message: response.message });
+            }
+            
+            google.script.run
+                .withSuccessHandler(llenarListaPedidosEdicion)
+                .withFailureHandler(errorHandler)
+                .getIdsPedidosDisponibles();
+        }
+
+
+        // --- Funciones de Pedido (Mantenidas) ---
+        function seleccionarSku() {
+            const skuEtiqueta = f('sku').value.trim();
+            const productoSeleccionado = skusDisponibles.find(p => p.etiqueta === skuEtiqueta);
+
+            if (productoSeleccionado) {
+                f('precioUnitario').value = productoSeleccionado.precio.toFixed(2);
+                f('precioUnitario').dataset.costo = productoSeleccionado.costo;
+                f('precioUnitario').dataset.marca = productoSeleccionado.marca;
+                f('precioUnitario').dataset.modelo = productoSeleccionado.modelo;
+                f('precioUnitario').dataset.proveedor = productoSeleccionado.proveedor;
+                f('precioUnitario').dataset.skuCorto = productoSeleccionado.sku;
+            } else {
+                f('precioUnitario').value = '';
+            }
+            calcularPrecioTotal();
+        }
+
+        function calcularPrecioTotal() {
+            const ciudad = f('ciudadEntrega').value.toUpperCase();
+            const cantidad = parseInt(f('cantidad').value) || 0;
+            const precioUnitario = parseFloat(f('precioUnitario').value) || 0;
+
+            const costoEnvio = tarifasCiudades[ciudad] || 0;
+            const subtotalProductos = cantidad * precioUnitario;
+            const total = subtotalProductos + costoEnvio;
+
+            f('costoEnvioDisplay').textContent = `$${costoEnvio.toFixed(2)}`;
+            f('totalPedidoDisplay').textContent = `$${total.toFixed(2)}`;
+        }
+
+        function agregarProducto() {
+            const skuEtiqueta = f('sku').value.trim();
+            const productoSeleccionado = skusDisponibles.find(p => p.etiqueta === skuEtiqueta);
+
+            if (!productoSeleccionado) {
+                mostrarAviso("Seleccione un ID de Producto válido de la lista.", 'warning');
+                return;
+            }
+
+            const cantidad = parseInt(f('cantidad').value);
+            const precioUnitario = parseFloat(f('precioUnitario').value);
+            const talla = f('talla').value.trim() || 'ÚNICA';
+            const cliente = f('cliente').value.trim();
+            const contacto = f('contacto').value.trim();
+            const ciudadCliente = f('ciudadCliente').value.trim();
+            const ciudadEntrega = f('ciudadEntrega').value.trim();
+
+            if (!cantidad || cantidad <= 0 || !precioUnitario || precioUnitario < 0 || !cliente || !contacto || !ciudadEntrega) {
+                mostrarAviso("Asegúrese de que el Cliente, Contacto, Ciudad de Entrega, Cantidad y Precio sean válidos.", 'warning');
+                return;
+            }
+
+            const nuevoProducto = {
+                sku: productoSeleccionado.sku,
+                marca: productoSeleccionado.marca,
+                modelo: productoSeleccionado.modelo,
+                proveedor: productoSeleccionado.proveedor,
+                costo: productoSeleccionado.costo,
+                cliente: cliente,
+                contacto: contacto,
+                ciudadCliente: ciudadCliente,
+                ciudadEntrega: ciudadEntrega,
+                talla: talla,
+                cantidad: cantidad,
+                precioUnitario: precioUnitario,
+                precioTotalLinea: cantidad * precioUnitario
+            };
+
+            listaProductosPedido.push(nuevoProducto);
+            renderizarTablaProductos();
+            
+            f('sku').value = '';
+            f('talla').value = '';
+            f('cantidad').value = '1';
+            f('precioUnitario').value = '';
+            f('costoEnvioDisplay').textContent = '$0.00';
+            f('totalPedidoDisplay').textContent = '$0.00';
+        }
+
+        function renderizarTablaProductos() {
+            const tbody = f('productosTableBody');
+            tbody.innerHTML = '';
+            let subtotal = 0;
+
+            listaProductosPedido.forEach((p, index) => {
+                const fila = tbody.insertRow();
+                subtotal += p.precioTotalLinea;
+                
+                fila.insertCell(0).textContent = p.sku;
+                fila.insertCell(1).textContent = `${p.marca} - ${p.modelo}`;
+                fila.insertCell(2).textContent = p.cantidad;
+                fila.insertCell(3).textContent = `$${p.precioUnitario.toFixed(2)}`;
+                fila.insertCell(4).textContent = `$${p.precioTotalLinea.toFixed(2)}`;
+                
+                const celdaAccion = fila.insertCell(5);
+                const boton = document.createElement('button');
+                boton.textContent = '❌';
+                boton.className = 'remove-product-btn';
+                boton.onclick = () => eliminarProducto(index);
+                celdaAccion.appendChild(boton);
+            });
+
+            const ciudad = f('ciudadEntrega').value.toUpperCase();
+            const costoEnvio = tarifasCiudades[ciudad] || 0;
+            const totalFinal = subtotal + costoEnvio;
+
+            f('costoEnvioDisplay').textContent = `$${costoEnvio.toFixed(2)}`;
+            f('totalPedidoDisplay').textContent = `$${totalFinal.toFixed(2)}`;
+        }
+
+        function eliminarProducto(index) {
+            listaProductosPedido.splice(index, 1);
+            renderizarTablaProductos();
+        }
+
+        function guardarPedido() {
+            if (listaProductosPedido.length === 0) {
+                mostrarAviso("Debe agregar al menos un producto al pedido.", 'warning');
+                return;
+            }
+
+            const fechaHoy = new Date().toISOString().split('T')[0];
+
+            const datosPedido = {
+                fechaPedido: fechaHoy,
+                productos: listaProductosPedido
+            };
+
+            f('loadingSpinner').style.display = 'inline';
+            f('btnText').style.display = 'none';
+            f('guardarPedidoBtn').disabled = true;
+
+            google.script.run
+                .withSuccessHandler(guardadoExitoso)
+                .withFailureHandler(errorHandler)
+                .guardarPedido(datosPedido);
+        }
+
+        function guardadoExitoso(response) {
+            if (response.success) {
+                f('registroForm').reset();
+                listaProductosPedido = [];
+                renderizarTablaProductos();
+
+                f('loadingSpinner').style.display = 'none';
+                f('btnText').style.display = 'inline';
+                f('guardarPedidoBtn').disabled = false;
+
+                mostrarAviso(`¡Pedido ${response.idPedido} registrado con éxito!`, 'success');
+                
+                google.script.run
+                    .withSuccessHandler(llenarListaProductosRechazo)
+                    .withFailureHandler(errorHandler)
+                    .getProductosRechazoDisponibles();
+                
+                google.script.run
+                    .withSuccessHandler(llenarListaPedidosEdicion)
+                    .withFailureHandler(errorHandler)
+                    .getIdsPedidosDisponibles();
+                
+                // Recargar lista de inventario también
+                google.script.run
+                    .withSuccessHandler(llenarListaInventario)
+                    .withFailureHandler(errorHandler)
+                    .getIdsInventarioDisponibles();
+
+            } else {
+                errorHandler({ message: "El servidor devolvió éxito, pero sin ID de pedido. Algo salió mal." });
+            }
+        }
+
+
+        // --- Funciones de Rechazo (Mantenidas) ---
+        function checkRechazoAvailability() {
+            const idProductoUnico = f('idProductoRechazo').value.trim();
+            const infoDiv = f('rechazoInfo');
+            const registrarBtn = f('registrarRechazoBtn');
+            infoDiv.innerHTML = '';
+            registrarBtn.disabled = true;
+
+            if (!idProductoUnico) {
+                return;
+            }
+
+            google.script.run
+                .withSuccessHandler(handleRechazoAvailability)
+                .withFailureHandler(errorHandler)
+                .getProductoParaRechazo(idProductoUnico);
+        }
+
+        // *** MODIFICADO: Muestra Marca-Modelo ***
+        function handleRechazoAvailability(producto) {
+            const infoDiv = f('rechazoInfo');
+            const registrarBtn = f('registrarRechazoBtn');
+
+            if (producto && !producto.error) {
+                infoDiv.innerHTML = `**Producto:** ${producto.marcaModelo}<br>
+                                     **Disponible para rechazar:** ${producto.unidadesDisponibles} unidad(es). 
+                                     (Total: ${producto.cantidadTotal}, Ya Rechazadas: ${producto.cantidadYaRechazada})`;
+                registrarBtn.disabled = producto.unidadesDisponibles <= 0;
+                f('cantidadRechazo').max = producto.unidadesDisponibles;
+
+            } else {
+                infoDiv.innerHTML = '⚠️ ID Producto Único no encontrado o error.';
+                registrarBtn.disabled = true;
+                if (producto && producto.error) {
+                    console.error("Error al buscar producto de rechazo:", producto.error);
+                }
+            }
+        }
+
+        function registrarRechazo() {
+            const idProductoUnico = f('idProductoRechazo').value.trim();
+            const cantidad = parseInt(f('cantidadRechazo').value);
+            const maxCantidad = parseInt(f('cantidadRechazo').max) || 999; 
+
+            if (!idProductoUnico || !cantidad || cantidad <= 0) {
+                mostrarAviso("Ingrese un ID Producto Único y una Cantidad válidos.", 'warning');
+                return;
+            }
+            if (cantidad > maxCantidad) {
+                mostrarAviso(`La cantidad a rechazar (${cantidad}) excede las unidades disponibles (${maxCantidad}).`, 'warning');
+                return;
+            }
+
+            f('btnRechazoText').style.display = "none";
+            f('loadingRechazoSpinner').style.display = "inline";
+            f('registrarRechazoBtn').disabled = true;
+
+            google.script.run
+                .withSuccessHandler(rechazoExitoso)
+                .withFailureHandler(errorHandler)
+                .registrarRechazo(idProductoUnico, cantidad);
+        }
+
+        function rechazoExitoso(response) {
+            f('btnRechazoText').style.display = "inline";
+            f('loadingRechazoSpinner').style.display = "none";
+            
+            if (response.success) {
+                mostrarAviso(`Rechazo registrado con éxito. Nueva cantidad total rechazada: ${response.newTotalRechazo}.`, 'success');
+                f('rechazoForm').reset();
+                f('rechazoInfo').innerHTML = '';
+                
+                // Recargar lista de inventario
+                google.script.run
+                    .withSuccessHandler(llenarListaInventario)
+                    .withFailureHandler(errorHandler)
+                    .getIdsInventarioDisponibles();
+            } else {
+                errorHandler({ message: "Error al registrar el rechazo." });
+            }
+            checkRechazoAvailability(); 
+        }
+
+        // --- Funciones de Venta Devolución (REVISADAS) ---
+        
+        function toggleConsumoInterno() {
+            const isInterno = f('consumoInterno').checked;
+            const clienteInput = f('clienteVenta');
+            const contactoInput = f('contactoVenta');
+            const ciudadInput = f('ciudadEntregaVenta');
+            const precioInput = f('precioUnitarioDevolucion');
+
+            if (isInterno) {
+                clienteInput.value = 'Consumo Interno';
+                contactoInput.value = '00000';
+                ciudadInput.value = 'Interno';
+                precioInput.value = '0.00';
+            } else {
+                clienteInput.value = '';
+                contactoInput.value = '';
+                ciudadInput.value = '';
+                precioInput.value = '';
+            }
+        }
+
+        function checkVentaDevolucionAvailability() {
+            const idProductoUnico = f('idProductoVenta').value.trim();
+            const infoDiv = f('ventaInfo');
+            const registrarBtn = f('registrarVentaDevolucionBtn');
+            infoDiv.innerHTML = '';
+            registrarBtn.disabled = true;
+
+            if (!idProductoUnico) {
+                return;
+            }
+
+            google.script.run
+                .withSuccessHandler(handleVentaAvailability)
+                .withFailureHandler(errorHandler)
+                .getDisponibilidadVentaDevolucion(idProductoUnico);
+        }
+
+        // *** MODIFICADO: Muestra Marca-Modelo ***
+        function handleVentaAvailability(producto) {
+            const infoDiv = f('ventaInfo');
+            const registrarBtn = f('registrarVentaDevolucionBtn');
+
+            if (producto && producto.disponible !== undefined && producto.marcaModelo !== '') {
+                // Muestra el estado
+                infoDiv.innerHTML = `**Producto:** ${producto.marcaModelo}<br>
+                                     **Disponible en Inventario:** ${producto.disponible} unidad(es). <br> 
+                                     **Estado:** ${producto.status || 'No encontrado'}`;
+                // Solo habilita el botón si está disponible
+                registrarBtn.disabled = (producto.disponible <= 0 || producto.status !== 'Disponible');
+                f('cantidadVenta').max = producto.disponible;
+            } else {
+                infoDiv.innerHTML = '⚠️ ID Producto Único no encontrado en inventario de devolución.';
+                registrarBtn.disabled = true;
+            }
+        }
+
+        function registrarVentaDevolucion() {
+            const idProductoVenta = f('idProductoVenta').value.trim();
+            const cantidadVenta = parseInt(f('cantidadVenta').value);
+            const precioUnitario = parseFloat(f('precioUnitarioDevolucion').value); // Esto será 0 o NaN
+            const cliente = f('clienteVenta').value.trim();
+            const contacto = f('contactoVenta').value.trim();
+            const direccionEntrega = f('direccionEntrega').value.trim();
+            const ciudadEntrega = f('ciudadEntregaVenta').value.trim();
+
+            // *** VALIDACIÓN CORREGIDA ***
+            // Ahora comprueba si es NaN y si es menor que 0, pero permite 0.
+            if (!idProductoVenta || !cantidadVenta || cantidadVenta <= 0 || isNaN(precioUnitario) || precioUnitario < 0 || !cliente || !contacto || !ciudadEntrega) {
+                mostrarAviso("Asegúrese de rellenar todos los campos obligatorios (ID Producto, Cantidad, Precio, Cliente, Contacto, Ciudad).", 'warning');
+                return;
+            }
+
+            const maxCantidad = parseInt(f('cantidadVenta').max) || 0;
+            if (cantidadVenta > maxCantidad) {
+                mostrarAviso(`La cantidad a vender (${cantidadVenta}) excede las unidades disponibles (${maxCantidad}).`, 'warning');
+                return;
+            }
+
+            const datosVenta = {
+                idProductoVenta: idProductoVenta,
+                cantidadVenta: cantidadVenta,
+                precioUnitario: precioUnitario, // Pasa el 0
+                cliente: cliente,
+                contacto: contacto,
+                direccionEntrega: direccionEntrega,
+                ciudadEntrega: ciudadEntrega
+            };
+
+            f('btnVentaDevolucionText').style.display = "none";
+            f('loadingVentaDevolucionSpinner').style.display = "inline";
+            f('registrarVentaDevolucionBtn').disabled = true;
+
+            google.script.run
+                .withSuccessHandler(ventaExitosa)
+                .withFailureHandler(errorHandler)
+                .registrarVentaDevolucion(datosVenta);
+        }
+
+        function ventaExitosa(response) {
+            try {
+                if (response.success) {
+                    // Muestra el nuevo estado
+                    mostrarAviso(`Venta de devolución registrada. Cantidad restante: ${response.nuevaCantidadDisponible}. <br> Nuevo Estado: ${response.newStatus}.`, 'success');
+                    f('ventaDevolucionForm').reset();
+                    f("idProductoVenta").value = ''; 
+                    f("precioUnitarioDevolucion").value = ''; 
+                    
+                    // Recargar lista de inventario
+                    google.script.run
+                        .withSuccessHandler(llenarListaInventario)
+                        .withFailureHandler(errorHandler)
+                        .getIdsInventarioDisponibles();
+                } else {
+                    errorHandler({ message: "Error al registrar la venta de devolución." });
+                }
+
+                f("precioUnitarioDevolucion").value = '';
+                checkVentaDevolucionAvailability(); 
+                
+            } catch (error) {
+                errorHandler(error);
+            } finally {
+                f("btnVentaDevolucionText").style.display = "inline";
+                f("loadingVentaDevolucionSpinner").style.display = "none";
+                f("registrarVentaDevolucionBtn").disabled = false;
+            }
+        }
+
+        
+        // --- Funciones de Registro de Guía (Pestaña 5) ---
+        function registrarGuia() {
+            const idPedido = f('idPedidoEnvio').value.trim();
+            const numeroGuia = f('numeroGuia').value.trim();
+            const fechaEnvio = f('fechaEnvio').value; 
+
+            if (!idPedido || !numeroGuia || !fechaEnvio) {
+                mostrarAviso("Debe completar todos los campos: ID Pedido, Número Guía y Fecha de Envío.", 'warning');
+                return;
+            }
+            
+            if (new Date(fechaEnvio).toString() === 'Invalid Date') {
+                 mostrarAviso("La fecha de envío no es válida.", 'warning');
+                 return;
+            }
+
+            f('loadingGuiaSpinner').style.display = 'inline';
+            f('btnGuiaText').style.display = 'none';
+            f('registrarGuiaBtn').disabled = true;
+
+            google.script.run
+                .withSuccessHandler(registroGuiaExitoso)
+                .withFailureHandler(errorHandler)
+                .registrarGuiaEnvio(idPedido, numeroGuia, fechaEnvio);
+        }
+
+        function registroGuiaExitoso(response) {
+            f('loadingGuiaSpinner').style.display = 'none';
+            f('btnGuiaText').style.display = 'inline';
+            f('registrarGuiaBtn').disabled = false;
+
+            if (response.success) {
+                mostrarAviso(response.message, 'success');
+                f('envioForm').reset();
+            } else {
+                errorHandler({ message: response.message });
+            }
+        }
+
+        // --- Funciones de Corrección de Rechazo (Pestaña 6) ---
+        
+        function checkCorreccionAvailability() {
+            const idProductoUnico = f('idProductoCorreccion').value.trim();
+            const infoDiv = f('correccionInfo');
+            const registrarBtn = f('registrarCorreccionBtn');
+            infoDiv.innerHTML = '';
+            registrarBtn.disabled = true;
+
+            if (!idProductoUnico) return;
+
+            // Reutilizamos la función de "Venta" porque trae los datos que necesitamos
+            google.script.run
+                .withSuccessHandler(handleCorreccionAvailability)
+                .withFailureHandler(errorHandler)
+                .getDisponibilidadVentaDevolucion(idProductoUnico);
+        }
+
+        // *** MODIFICADO: Muestra Marca-Modelo ***
+        function handleCorreccionAvailability(producto) {
+            const infoDiv = f('correccionInfo');
+            const registrarBtn = f('registrarCorreccionBtn');
+
+            if (producto && producto.disponible !== undefined && producto.marcaModelo !== '') {
+                infoDiv.innerHTML = `**Producto:** ${producto.marcaModelo}<br>
+                                     **Disponible en Inventario:** ${producto.disponible} unidad(es). <br> 
+                                     **Estado:** ${producto.status || 'No encontrado'}`;
+                // Solo puedes corregir si hay stock en el inventario
+                registrarBtn.disabled = producto.disponible <= 0; 
+                f('cantidadCorreccion').max = producto.disponible;
+            } else {
+                infoDiv.innerHTML = '⚠️ ID Producto Único no encontrado en inventario de devolución.';
+                registrarBtn.disabled = true;
+            }
+        }
+
+        function registrarCorreccion() {
+            const idProductoUnico = f('idProductoCorreccion').value.trim();
+            const cantidad = parseInt(f('cantidadCorreccion').value);
+            const maxCantidad = parseInt(f('cantidadCorreccion').max) || 0;
+
+            if (!idProductoUnico || !cantidad || cantidad <= 0) {
+                mostrarAviso("Ingrese un ID Producto Único y una Cantidad válidos.", 'warning');
+                return;
+            }
+            if (cantidad > maxCantidad) {
+                mostrarAviso(`La cantidad a corregir (${cantidad}) excede las unidades disponibles en inventario (${maxCantidad}).`, 'warning');
+                return;
+            }
+
+            f('btnCorreccionText').style.display = "none";
+            f('loadingCorreccionSpinner').style.display = "inline";
+            f('registrarCorreccionBtn').disabled = true;
+
+            google.script.run
+                .withSuccessHandler(correccionExitosa)
+                .withFailureHandler(errorHandler)
+                .corregirRechazo(idProductoUnico, cantidad);
+        }
+
+        function correccionExitosa(response) {
+            f('btnCorreccionText').style.display = "inline";
+            f('loadingCorreccionSpinner').style.display = "none";
+            f('registrarCorreccionBtn').disabled = false;
+            
+            if (response.success) {
+                mostrarAviso(response.message, 'success');
+                f('correccionForm').reset();
+                f('correccionInfo').innerHTML = '';
+                
+                // Recargar lista de inventario
+                google.script.run
+                    .withSuccessHandler(llenarListaInventario)
+                    .withFailureHandler(errorHandler)
+                    .getIdsInventarioDisponibles();
+            } else {
+                errorHandler({ message: response.message });
+            }
+            checkCorreccionAvailability(); // Recargar info
+        }
+
+
+        // --- Funciones de Aviso Modal ---
+        function mostrarAviso(mensaje, tipo = 'warning') {
+            const customAlert = A("customAlert");
+            const alertContent = customAlert.querySelector('.alert-content');
+            const alertIcon = A("alertIcon");
+
+            A("alertMessage").innerHTML = mensaje.replace(/\n/g, '<br>');
+
+            alertContent.classList.remove('alert-success', 'alert-error', 'alert-warning');
+            alertContent.classList.add(`alert-${tipo}`);
+            
+            let iconHtml = '';
+            if (tipo === 'success') {
+                iconHtml = '✅';
+            } else if (tipo === 'error') {
+                iconHtml = '❌';
+            } else if (tipo === 'warning') {
+                iconHtml = '⚠️';
+            }
+            alertIcon.textContent = iconHtml;
+
+            customAlert.style.display = 'flex';
+        }
+
+        function ocultarAviso() {
+            A("customAlert").style.display = 'none';
+        }
+
+        /**
+         * Alterna el modo oscuro y guarda la preferencia.
+         */
+        function toggleDarkMode() {
+            const isDarkMode = document.body.classList.toggle('dark-mode');
+            const modeToggleBtn = f("modeToggleBtn");
+            
+            if (isDarkMode) {
+                localStorage.setItem('theme', 'dark');
+                if (modeToggleBtn) modeToggleBtn.textContent = '🌙';
+            } else {
+                localStorage.setItem('theme', 'light');
+                if (modeToggleBtn) modeToggleBtn.textContent = '💡';
+            }
+        }
+    </script>
+</body>
+
+</html>
