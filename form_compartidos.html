@@ -1,0 +1,560 @@
+<base target="_top">
+<script>
+  // Variable global del CLIENTE para guardar el estado
+  var g_currentRowIndex = -1;
+  // Variable global para guardar los datos actuales y no tener que pedirlos de nuevo
+  var g_currentProductData = null;
+  
+  // =======================================================
+  // FUNCIONES DE LÓGICA
+  // =======================================================
+
+  /**
+   * CORRECCIÓN: Genera el string de descripción con formato (replicado de Code.gs).
+   * Se usa para re-calcular la descripción después de editar o al copiar.
+   */
+  function formatDescription(product) {
+    var priceFormatted = '0'; 
+    if (product.precio) {
+      var priceValue = product.precio;
+      // Usar toLocaleString para el formato de miles colombiano (ej: 145.000)
+      priceFormatted = Math.round(priceValue).toLocaleString("es-CO");
+    }
+    var description = 
+      "SKU: " + product.sku + "\n" +
+      "Marca: " + product.marca + "\n" +
+      "Modelo: " + product.modelo + "\n" +
+      "Género: " + product.genero + "\n" +
+      "Precio: $" + priceFormatted; 
+    return description;
+  }
+
+  /**
+   * Carga el producto. Primero busca el progreso guardado.
+   */
+  function loadNextProduct() {
+    document.getElementById('product-details').innerHTML = '<div class="loader"></div>';
+    document.getElementById('status-bar').innerHTML = 'Buscando progreso...';
+    
+    google.script.run
+        .withSuccessHandler(function(savedIndex) {
+            var startIndex = savedIndex ? parseInt(savedIndex) : 1;
+            document.getElementById('status-bar').innerHTML = 'Cargando producto...';
+            
+            google.script.run
+                .withSuccessHandler(displayProduct)
+                .getNextProduct(startIndex); 
+        })
+        .getUserProgress();
+  }
+  
+  /**
+   * Lógica para saltar el producto
+   */
+  function skipCurrentProduct() {
+      var buttonSkip = document.getElementById('btn-skip');
+      buttonSkip.disabled = true;
+      buttonSkip.textContent = 'Buscando...';
+      
+      google.script.run
+        .withSuccessHandler(function(response) {
+            showToast('Saltando y buscando el siguiente...');
+            displayProduct(response); 
+        })
+        .skipProduct(g_currentRowIndex); 
+  }
+
+  /**
+   * Muestra los datos del producto en la interfaz
+   */
+  function displayProduct(productData) {
+    // Guardar los datos globalmente
+    g_currentProductData = productData; 
+    
+    var container = document.getElementById('product-details');
+    var statusBar = document.getElementById('status-bar');
+    var buttonShared = document.getElementById('btn-shared');
+    var buttonCopy = document.getElementById('btn-copy');
+    var buttonImage = document.getElementById('btn-image');
+    var buttonSkip = document.getElementById('btn-skip'); 
+    var buttonEdit = document.getElementById('btn-edit'); 
+    var hiddenDescription = document.getElementById('hidden-description');
+    
+    // Ocultar botones de edición por defecto
+    document.getElementById('btn-save-edit').style.display = 'none';
+    document.getElementById('btn-cancel-edit').style.display = 'none';
+    
+    container.innerHTML = '';
+    buttonShared.style.display = 'none';
+    buttonCopy.style.display = 'none';
+    buttonImage.style.display = 'none';
+    buttonSkip.style.display = 'none';
+    buttonEdit.style.display = 'none';
+    g_currentRowIndex = -1; 
+
+    if (productData.error || productData.message) {
+        container.innerHTML = `<div class="card error"><h4>${productData.error || productData.message}</h4></div>`;
+        statusBar.innerHTML = 'Estado: Finalizado.';
+        g_currentProductData = null; // Limpiar datos si no hay producto
+    } else {
+        g_currentRowIndex = productData.rowIndex;
+
+        statusBar.innerHTML = `
+            <div class="progress-info">
+                <span>Producto: <strong class="highlight">${productData.currentIndex}</strong> / ${productData.totalItems}</span>
+                <span>Faltan: <strong class="highlight-secondary">${productData.totalItems - productData.currentIndex + 1}</strong></span>
+            </div>
+        `;
+        
+        // HTML que incluye campos de VISTA (span) y EDICIÓN (input)
+        container.innerHTML = `
+            <div class="card">
+                <div class="detail-row"><strong class="label">Fila en Hoja:</strong> ${productData.rowIndex}</div>
+                
+                <div class="detail-row">
+                    <strong class="label">SKU:</strong>
+                    <span class="display-field" id="display-sku">${productData.sku}</span>
+                    <input type="text" class="edit-field" id="edit-sku" value="${productData.sku}" style="display:none;">
+                </div>
+                
+                <div class="detail-row">
+                    <strong class="label">Marca:</strong>
+                    <span class="display-field" id="display-marca">${productData.marca}</span>
+                    <input type="text" class="edit-field" id="edit-marca" value="${productData.marca}" style="display:none;">
+                </div>
+                
+                <div class="detail-row">
+                    <strong class="label">Modelo:</strong>
+                    <span class="display-field" id="display-modelo">${productData.modelo}</span>
+                    <input type="text" class="edit-field" id="edit-modelo" value="${productData.modelo}" style="display:none;">
+                </div>
+                
+                <div class="detail-row">
+                    <strong class="label">Género:</strong>
+                    <span class="display-field" id="display-genero">${productData.genero}</span>
+                    <input type="text" class="edit-field" id="edit-genero" value="${productData.genero}" style="display:none;">
+                </div>
+                
+                <div class="detail-row price-container">
+                    <strong class="label">Precio:</strong>
+                    <span class="display-field price-tag" id="display-precio">$${productData.precio.toLocaleString("es-CO")}</span>
+                    <input type="number" class="edit-field" id="edit-precio" value="${productData.precio}" style="display:none;">
+                </div>
+            </div>
+        `;
+        
+        // ⚡ CORRECCIÓN CLAVE: La descripción formateada se guarda aquí
+        g_currentProductData.formattedDescription = formatDescription(productData);
+        hiddenDescription.value = g_currentProductData.formattedDescription;
+
+        if (productData.imageLink) {
+            buttonImage.style.display = 'block';
+            buttonImage.onclick = function() {
+                window.open(productData.imageLink, '_blank');
+            };
+        } else {
+             container.innerHTML += `<div class="card-warning">⚠️ **AVISO:** No se encontró ID de imagen para este producto.</div>`;
+        }
+
+        
+        buttonShared.dataset.rowIndex = productData.rowIndex;
+        
+        // Mostrar botones de acción
+        buttonShared.style.display = 'block';
+        buttonCopy.style.display = 'block';
+        buttonSkip.style.display = 'block'; 
+        buttonEdit.style.display = 'block'; 
+        
+        // Restaurar botones
+        buttonShared.disabled = false;
+        buttonShared.textContent = '✅ Marcar como Compartido';
+        buttonSkip.disabled = false;
+        buttonSkip.textContent = '⏩ Saltar / Siguiente';
+    }
+  }
+
+  /**
+   * Muestra/Oculta los campos de edición.
+   */
+  function toggleEditMode(isEditing) {
+    // Campos a alternar
+    const fields = ['sku', 'marca', 'modelo', 'genero', 'precio'];
+    
+    fields.forEach(field => {
+      document.getElementById(`display-${field}`).style.display = isEditing ? 'none' : 'block';
+      document.getElementById(`edit-${field}`).style.display = isEditing ? 'block' : 'none';
+    });
+    
+    // Botones de navegación principal
+    document.getElementById('btn-shared').style.display = isEditing ? 'none' : 'block';
+    document.getElementById('btn-copy').style.display = isEditing ? 'none' : 'block';
+    document.getElementById('btn-skip').style.display = isEditing ? 'none' : 'block';
+    document.getElementById('btn-image').style.display = isEditing ? 'none' : 'block';
+    
+    // Botones de edición
+    document.getElementById('btn-edit').style.display = isEditing ? 'none' : 'block';
+    document.getElementById('btn-save-edit').style.display = isEditing ? 'none' : 'block';
+    document.getElementById('btn-cancel-edit').style.display = isEditing ? 'none' : 'block';
+  }
+
+  /**
+   * Guarda los cambios de la edición rápida.
+   */
+  function saveEdits() {
+    const btnSave = document.getElementById('btn-save-edit');
+    btnSave.disabled = true;
+    btnSave.textContent = 'Guardando...';
+
+    // 1. Recolectar los nuevos datos de los inputs
+    const dataToUpdate = {
+      sku: document.getElementById('edit-sku').value,
+      marca: document.getElementById('edit-marca').value,
+      modelo: document.getElementById('edit-modelo').value,
+      genero: document.getElementById('edit-genero').value,
+      precio: Number(document.getElementById('edit-precio').value) || 0
+    };
+
+    // 2. Enviar al servidor
+    google.script.run
+      .withSuccessHandler(function(response) {
+        if (response.status === 'success') {
+          showToast('✅ Producto actualizado');
+          
+          // 3. Actualizar la variable global con los nuevos datos
+          g_currentProductData.sku = dataToUpdate.sku;
+          g_currentProductData.marca = dataToUpdate.marca;
+          g_currentProductData.modelo = dataToUpdate.modelo;
+          g_currentProductData.genero = dataToUpdate.genero;
+          g_currentProductData.precio = dataToUpdate.precio;
+          
+          // 4. Volver a mostrar el producto con los datos actualizados
+          displayProduct(g_currentProductData);
+          
+        } else {
+          showToast(`❌ Error: ${response.message}`);
+        }
+        // Salir del modo edición independientemente del resultado
+        toggleEditMode(false);
+        btnSave.disabled = false;
+        btnSave.textContent = 'Guardar Cambios';
+      })
+      .updateProduct(g_currentRowIndex, dataToUpdate);
+  }
+
+  /**
+   * Resetea el progreso guardado y recarga.
+   */
+  function resetProgress(e) {
+    e.preventDefault();
+    if (confirm("¿Estás seguro de que quieres reiniciar tu progreso? Se empezará a mostrar desde el primer producto.")) {
+      showToast('Reseteando progreso...');
+      google.script.run
+        .withSuccessHandler(function(response) {
+          if (response.status === 'success') {
+            loadNextProduct(); // Recargar desde el inicio
+          } else {
+            showToast(`❌ Error: ${response.message}`);
+          }
+        })
+        .resetUserProgress();
+    }
+  }
+
+  // CORRECCIÓN CLAVE: Asegurarse de que el valor copiado sea el formateado
+  function copyDescription() {
+    // 1. Re-calculamos la descripción por si los datos en g_currentProductData cambiaron
+    const newDescription = formatDescription(g_currentProductData);
+
+    var copyText = document.getElementById('hidden-description');
+    copyText.value = newDescription; // Usar la descripción recién formateada
+    
+    // Lógica para copiar
+    copyText.select();
+    copyText.setSelectionRange(0, 99999); 
+    
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(copyText.value).then(() => showToast('📋 Descripción copiada'));
+    } else {
+        document.execCommand('copy');
+        showToast('📋 Descripción copiada');
+    }
+  }
+
+
+  function markAndRefresh() {
+    var buttonShared = document.getElementById('btn-shared');
+    var rowIndex = buttonShared.dataset.rowIndex;
+    
+    buttonShared.disabled = true;
+    buttonShared.textContent = 'Actualizando...';
+    
+    google.script.run
+        .withSuccessHandler(function(response) {
+            showToast('Actualizado y buscando el siguiente...');
+            displayProduct(response.nextProduct); 
+        })
+        .markAsShared(parseInt(rowIndex));
+  }
+  
+  function showToast(message) {
+      var toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'show';
+      setTimeout(function(){ toast.className = toast.className.replace('show', ''); }, 3000);
+  }
+
+  // Iniciar al cargar la página
+  window.onload = loadNextProduct;
+</script>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+  
+  /* --- Variables de Diseño (Basadas en "Registro de Productos") --- */
+  :root {
+    --primary: #D61A1A;         
+    --secondary: #007BFF;
+    --bg: #ffffff;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --border: #d1d5db;
+    --input-bg: #f9fafb;
+    --success-color: #10B981;
+    --danger: var(--primary);
+    
+    /* Mapeo para los estilos de "Control Compartidos" */
+    --color-primary: var(--primary);
+    --color-secondary: var(--text);
+    --color-background: var(--bg);
+    --color-text-dark: var(--text);
+    --color-border: var(--border);
+    --color-light-bg: var(--input-bg);
+    --color-danger-light: #fef2f2;
+    --color-success: var(--success-color);     
+  }
+
+  body { 
+    font-family: 'Poppins', sans-serif; 
+    padding: 15px; 
+    background-color: var(--color-background); 
+    color: var(--color-text-dark);
+    margin: 0;
+  }
+  
+  h4 { 
+    margin-top: 0; 
+    margin-bottom: 20px;
+    color: var(--color-primary); 
+    text-align: center; 
+    font-weight: 700; 
+    text-transform: uppercase;
+  }
+  
+  .card { 
+    background-color: var(--color-light-bg); 
+    border: 1px solid var(--color-border); 
+    border-radius: 8px; 
+    padding: 20px; 
+    margin-bottom: 20px; 
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
+  }
+  .card.error h4 {
+    color: var(--danger);
+    font-weight: 600;
+    text-transform: none;
+  }
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Centrar verticalmente */
+    padding: 7px 0;
+    border-bottom: 1px solid #eeeeee;
+    font-size: 0.95em;
+    min-height: 44px; /* Altura para alinear con inputs */
+  }
+  .detail-row:last-child {
+    border-bottom: none;
+  }
+  .label { 
+    color: var(--muted); 
+    font-weight: 500;
+    flex-shrink: 0; /* Evitar que el label se encoja */
+    margin-right: 10px;
+  }
+  .price-container {
+    background-color: var(--color-danger-light); 
+    border-radius: 4px;
+    padding: 10px;
+    margin-top: 15px;
+    font-size: 1.2em;
+    border: 1px dashed var(--color-primary);
+  }
+  .price-tag {
+    color: var(--color-primary); 
+    font-weight: 700;
+  }
+  .card-warning {
+    background-color: #fffbeb; 
+    color: #b45309;
+    border: 1px solid #fde68a;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    margin-top: 10px;
+  }
+  .button-container { 
+    margin-top: 15px; 
+  }
+  
+  /* --- Estilos de Botones (Principales) --- */
+  button {
+    color: white;
+    padding: 14px; 
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    margin-bottom: 10px;
+    font-size: 1em;
+    font-weight: 600; 
+    transition: background .15s ease, opacity .15s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  #btn-shared { background-color: var(--primary); } 
+  #btn-copy { background-color: var(--text); } 
+  #btn-image { background-color: #555; } 
+  #btn-skip { background-color: var(--muted); }
+  button:hover:not(:disabled) {
+    opacity: 0.85; 
+  }
+  button:disabled {
+    background-color: #bbbbbb !important;
+    opacity: .65;
+    cursor: not-allowed;
+  }
+  
+  /* --- Estilos de Edición Rápida --- */
+  .display-field {
+    text-align: right;
+    font-weight: 500;
+    word-break: break-all;
+  }
+  .edit-field {
+    height: 44px; 
+    padding: 10px 12px;
+    width: 60%; /* Ocupar el espacio restante */
+    font-size: 14px;
+    background: var(--bg); /* Fondo blanco al editar */
+    box-sizing: border-box;
+    border-radius: 6px; 
+    border: 1px solid var(--border);
+    text-align: right;
+  }
+  .edit-field:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(214, 26, 26, 0.2); 
+  }
+  #btn-edit { background-color: var(--secondary); }
+  #btn-save-edit { background-color: var(--success-color); }
+  #btn-cancel-edit { background-color: var(--muted); }
+  
+  /* --- Estilo de Reseteo --- */
+  #reset-container {
+    text-align: center;
+    margin-top: 10px;
+  }
+  #reset-link {
+    font-size: 0.85em;
+    color: var(--muted);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  #reset-link:hover {
+    color: var(--primary);
+  }
+
+  /* --- Estilos de Status y Toast (Sin cambios) --- */
+  #status-bar {
+    background-color: var(--color-danger-light);
+    border: 1px solid var(--color-primary);
+    color: var(--color-text-dark);
+    padding: 12px 18px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    font-size: 1em;
+    display: flex;
+    justify-content: space-between;
+  }
+  .progress-info {
+    font-size: 0.9em;
+  }
+  .highlight {
+    font-weight: 700;
+    color: var(--color-secondary); 
+  }
+  .highlight-secondary {
+    font-weight: 700;
+    color: var(--color-primary); 
+  }
+  .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--color-primary); border-radius: 50%; width: 20px; height: 20px; animation: spin 2s linear infinite; margin: 15px auto; }
+  @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  #toast { 
+    visibility: hidden; min-width: 250px; margin-left: -125px; 
+    background-color: var(--color-secondary); color: var(--color-background);
+    text-align: center; border-radius: 4px; padding: 12px; 
+    position: fixed; z-index: 1000; left: 50%; bottom: 20px; 
+    font-size: 0.9em; box-shadow: 0 4px 12px rgba(0,0,0,0.4); 
+  }
+  #toast.show { visibility: visible; -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+  @-webkit-keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 20px; opacity: 1;} }
+  @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 20px; opacity: 1;} }
+  @-webkit-keyframes fadeout { from {bottom: 20px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+  @keyframes fadeout { from {bottom: 20px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+</style>
+
+<h4>Control de Productos por Compartir</h4>
+
+<div id="status-bar">Cargando estado...</div>
+
+<div id="product-details">
+  <div class="loader"></div>
+</div>
+
+<div class="button-container">
+  <textarea id="hidden-description" style="position: absolute; left: -9999px;"></textarea>
+  
+  <button id="btn-image" onclick="" style="display: none;">
+    🖼️ Abrir Link Imagen
+  </button>
+  
+  <button id="btn-copy" onclick="copyDescription()" style="display: none;">
+    📋 Copiar Descripción
+  </button>
+  
+  <button id="btn-edit" onclick="toggleEditMode(true)" style="display: none;">
+    ✏️ Editar Producto
+  </button>
+  
+  <button id="btn-save-edit" onclick="saveEdits()" style="display: none;">
+    💾 Guardar Cambios
+  </button>
+  <button id="btn-cancel-edit" onclick="toggleEditMode(false)" style="display: none;">
+    ❌ Cancelar
+  </button>
+  
+  <button id="btn-skip" onclick="skipCurrentProduct()" style="display: none;">
+    ⏩ Saltar / Siguiente
+  </button>
+  
+  <button id="btn-shared" onclick="markAndRefresh()" style="display: none;">
+    ✅ Marcar como Compartido
+  </button>
+  
+  <div id="reset-container">
+    <a href="#" id="reset-link" onclick="resetProgress(event)">Empezar desde el principio</a>
+  </div>
+</div>
+
+<div id="toast"></div>
